@@ -1,0 +1,95 @@
+services:
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PostgreSQL 16
+  # ─────────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: toonlive-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-toonlive}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-toonlive}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - toonlive
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # game-api  (REST / auth / Flyway migrations)  — port 8080
+  # ─────────────────────────────────────────────────────────────────────────────
+  game-api:
+    build:
+      context: ./game-api
+      dockerfile: Dockerfile
+    container_name: toonlive-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-toonlive}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200}
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/api/rooms"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - toonlive
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # game-server  (STOMP WebSocket / état des rooms)  — port 8081
+  # ─────────────────────────────────────────────────────────────────────────────
+  game-server:
+    build:
+      context: ./game-server-java
+      dockerfile: Dockerfile
+    container_name: toonlive-server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      game-api:
+        condition: service_healthy    # attend que Flyway ait créé le schéma
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-toonlive}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4200}
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8081/ws/info"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - toonlive
+
+volumes:
+  postgres_data:
+    name: toonlive-postgres-data
+
+networks:
+  toonlive:
+    name: toonlive-network
+    driver: bridge

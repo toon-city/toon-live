@@ -1,0 +1,16 @@
+{
+  "name": "toon-live",
+  "private": true,
+  "workspaces": [
+    "game-core",
+    "game-types",
+    "game-server",
+    "game-socket",
+    "game-web"
+  ],
+  "scripts": {
+    "dev:server": "cd game-server && bun --watch src/index.ts",
+    "dev:web": "cd game-web && ng serve",
+    "typecheck": "bun run --filter '*' typecheck"
+  }
+}
