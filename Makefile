@@ -10,12 +10,13 @@ dev:
 dev-kill:
 	./dev.sh --kill
 
-## Lance uniquement la BDD + Adminer (développement)
+## Lance uniquement la BDD + Adminer + assets (développement)
 dev-db:
 	docker compose -f docker-compose.dev.yml up -d
 	@echo ""
-	@echo "✓  PostgreSQL → localhost:5432"
-	@echo "✓  Adminer    → http://localhost:8888  (server: postgres, user: postgres)"
+	@echo "✓  PostgreSQL  → localhost:5432"
+	@echo "✓  Adminer     → http://localhost:8888  (server: postgres, user: postgres)"
+	@echo "✓  game-assets → http://localhost:3001"
 
 ## Arrête l'environnement de dev
 dev-stop:
@@ -50,6 +51,10 @@ watch-server:
 ## Lance le frontend Angular (proxy vers :8080/:8081 actif)
 dev-web:
 	cd game-web && bun run start
+
+## Lance le panel d'administration Angular (:4201)
+dev-admin:
+	cd game-admin && npm start
 
 ## Lance tout en production
 prod-build:

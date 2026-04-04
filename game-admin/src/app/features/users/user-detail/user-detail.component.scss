@@ -1,0 +1,19 @@
+.back-link { color: var(--primary-color); text-decoration: none; font-size: 0.9rem; }
+.detail-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--surface-border);
+  &:last-child { border-bottom: none; }
+  span:first-child { color: var(--text-color-secondary); font-size: 0.85rem; }
+}
+.ban-info { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+.ban-details { display: flex; flex-direction: column; font-size: 0.85rem; }
+.mono { font-family: monospace; font-size: 0.75rem; }

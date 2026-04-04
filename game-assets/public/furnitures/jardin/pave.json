@@ -1,0 +1,35 @@
+{
+	"frames": {
+		"pave_1.png": {
+			"frame": {
+				"x": 30,
+				"y": 30,
+				"w": 138,
+				"h": 78
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 138,
+				"h": 78
+			},
+			"sourceSize": {
+				"w": 138,
+				"h": 78
+			}
+		}
+	},
+	"meta": {
+		
+		"version": "1.0",
+		"image": "pave.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 198,
+			"h": 138
+		},
+		"scale": "1"
+	}
+}

@@ -1,0 +1,10 @@
+.user-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

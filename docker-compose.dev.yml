@@ -1,11 +1,13 @@
 # ───────────────────────────────────────────────────────────────────────────────
 # Environnement de DÉVELOPPEMENT
-# Lance uniquement PostgreSQL + Adminer.
+# Lance uniquement PostgreSQL + Adminer + game-assets.
 # Les services Spring Boot (game-api, game-server) tournent en local :
 #   cd game-api        && ./gradlew bootRun
 #   cd game-server-java && ./gradlew bootRun
 # Le frontend Angular :
 #   cd game-web         && ng serve
+# Le serveur d'assets :
+#   docker compose -f docker-compose.dev.yml up game-assets
 # ───────────────────────────────────────────────────────────────────────────────
 
 services:
@@ -40,6 +42,22 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: postgres
       ADMINER_DESIGN: pepa-linha-dark
+
+  # Serveur d'assets dynamiques (port 3001) — assets montés en volume local
+  game-assets:
+    build:
+      context: ./game-assets
+      dockerfile: Dockerfile
+    container_name: toonlive-dev-assets
+    restart: unless-stopped
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-dev-secret}
+      PUBLIC_DIR: /usr/share/nginx/html
+      UPLOAD_PORT: "3002"
+    volumes:
+      - ./game-assets/public:/usr/share/nginx/html
+    ports:
+      - "3001:80"
 
 volumes:
   postgres_dev_data:

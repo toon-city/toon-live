@@ -1,0 +1,131 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <h2>Boutique : <code>{{ shopId() }}</code></h2>
+</div>
+
+<p-tabView>
+  <!-- ===== Articles ===== -->
+  <p-tabPanel header="Articles">
+    <div class="tab-toolbar">
+      <p-button label="Ajouter un article" icon="pi pi-plus" (onClick)="openCreateItem()" />
+    </div>
+    <p-table [value]="items()" styleClass="p-datatable-sm p-datatable-gridlines mt-2">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Article</th>
+          <th>Type</th>
+          <th>Prix Pez</th>
+          <th>Prix Kreds</th>
+          <th>Bonus Kreds</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.item.name }}</td>
+          <td><p-tag [value]="item.item.itemType" severity="info" /></td>
+          <td>{{ item.pezPrice ?? '—' }}</td>
+          <td>{{ item.kredPrice ?? '—' }}</td>
+          <td>{{ item.kredBonus }}</td>
+          <td>{{ item.stock ?? '∞' }}</td>
+          <td class="actions-cell">
+            <p-button icon="pi pi-pencil" [text]="true" size="small" (onClick)="openEditItem(item)" />
+            <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" (onClick)="deleteItem(item)" />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
+
+  <!-- ===== Collections ===== -->
+  <p-tabPanel header="Collections">
+    <div class="tab-toolbar">
+      <p-button label="Nouvelle collection" icon="pi pi-plus" (onClick)="openCreateCol()" />
+    </div>
+    <p-table [value]="collections()" styleClass="p-datatable-sm p-datatable-gridlines mt-2">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Ordre</th>
+          <th>Nom</th>
+          <th>Description</th>
+          <th>Activée</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-col>
+        <tr>
+          <td>{{ col.sortOrder }}</td>
+          <td><strong>{{ col.name }}</strong></td>
+          <td>{{ col.bannerImage ?? '—' }}</td>
+          <td>
+            @if (col.enabled) { <p-tag value="Oui" severity="success" /> }
+            @else { <p-tag value="Non" severity="warning" /> }
+          </td>
+          <td class="actions-cell">
+            <p-button icon="pi pi-pencil" [text]="true" size="small" (onClick)="openEditCol(col)" />
+            <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" (onClick)="deleteCol(col)" />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-tabPanel>
+</p-tabView>
+
+<!-- Item dialog -->
+<p-dialog [(visible)]="itemDialog" [header]="editShopItem ? 'Modifier l\'article' : 'Ajouter un article'" [modal]="true" [style]="{width:'420px'}">
+  <form [formGroup]="itemForm" class="dialog-form">
+    <div class="field">
+      <label>ID Article *</label>
+      <input pInputText type="number" formControlName="itemId" class="w-full mt-1" [readonly]="!!editShopItem" />
+    </div>
+    <div class="field mt-3">
+      <label>Prix en Pez</label>
+      <input pInputText type="number" formControlName="pezPrice" placeholder="null = pas d'option" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Prix en Kreds</label>
+      <input pInputText type="number" formControlName="kredPrice" placeholder="null = pas d'option" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Bonus Kreds requis</label>
+      <input pInputText type="number" formControlName="kredBonus" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Stock (vide = illimité)</label>
+      <input pInputText type="number" formControlName="stock" placeholder="illimité" class="w-full mt-1" />
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" [text]="true" (onClick)="itemDialog = false" />
+    <p-button [label]="editShopItem ? 'Modifier' : 'Ajouter'" (onClick)="saveItem()" [disabled]="itemForm.invalid" />
+  </ng-template>
+</p-dialog>
+
+<!-- Collection dialog -->
+<p-dialog [(visible)]="colDialog" [header]="editCol ? 'Modifier la collection' : 'Nouvelle collection'" [modal]="true" [style]="{width:'420px'}">
+  <form [formGroup]="colForm" class="dialog-form">
+    <div class="field">
+      <label>Nom *</label>
+      <input pInputText formControlName="name" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Image bannière</label>
+      <input pInputText formControlName="bannerImage" placeholder="URL ou chemin..." class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Ordre d'affichage</label>
+      <input pInputText type="number" formControlName="sortOrder" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3 flex align-items-center gap-2">
+      <p-inputSwitch formControlName="enabled" inputId="enabled" />
+      <label for="enabled">Activée</label>
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" [text]="true" (onClick)="colDialog = false" />
+    <p-button [label]="editCol ? 'Modifier' : 'Créer'" (onClick)="saveCol()" [disabled]="colForm.invalid" />
+  </ng-template>
+</p-dialog>

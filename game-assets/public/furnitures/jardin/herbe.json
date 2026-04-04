@@ -1,0 +1,155 @@
+{
+	"frames": {
+		"herbe_1.png": {
+			"frame": {
+				"x": 30,
+				"y": 30,
+				"w": 181,
+				"h": 101
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 181,
+				"h": 101
+			},
+			"sourceSize": {
+				"w": 181,
+				"h": 101
+			}
+		},
+		"herbe_2.png": {
+			"frame": {
+				"x": 271,
+				"y": 30,
+				"w": 178,
+				"h": 101
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 178,
+				"h": 101
+			},
+			"sourceSize": {
+				"w": 178,
+				"h": 101
+			}
+		},
+		"herbe_3.png": {
+			"frame": {
+				"x": 30,
+				"y": 191,
+				"w": 181,
+				"h": 101
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 181,
+				"h": 101
+			},
+			"sourceSize": {
+				"w": 181,
+				"h": 101
+			}
+		},
+		"herbe_4.png": {
+			"frame": {
+				"x": 271,
+				"y": 191,
+				"w": 301,
+				"h": 136
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 301,
+				"h": 136
+			},
+			"sourceSize": {
+				"w": 301,
+				"h": 136
+			}
+		},
+		"herbe_5.png": {
+			"frame": {
+				"x": 30,
+				"y": 387,
+				"w": 303,
+				"h": 116
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 303,
+				"h": 116
+			},
+			"sourceSize": {
+				"w": 303,
+				"h": 116
+			}
+		},
+		"herbe_6.png": {
+			"frame": {
+				"x": 632,
+				"y": 30,
+				"w": 268,
+				"h": 188
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 268,
+				"h": 188
+			},
+			"sourceSize": {
+				"w": 268,
+				"h": 188
+			}
+		},
+		"herbe_7.png": {
+			"frame": {
+				"x": 632,
+				"y": 278,
+				"w": 288,
+				"h": 106
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 288,
+				"h": 106
+			},
+			"sourceSize": {
+				"w": 288,
+				"h": 106
+			}
+		}
+	},
+	"meta": {
+		
+		"version": "1.0",
+		"image": "herbe.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 950,
+			"h": 533
+		},
+		"scale": "1"
+	}
+}

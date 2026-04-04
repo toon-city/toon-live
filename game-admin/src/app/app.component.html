@@ -1,0 +1,93 @@
+@if (isLoggedIn()) {
+  <div class="layout-wrapper">
+
+    <!-- Sidebar -->
+    <aside class="layout-sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-row">
+          <div class="logo-icon"><i class="pi pi-star-fill"></i></div>
+          <h2>Toon Live</h2>
+        </div>
+        <small>Panel d'administration</small>
+      </div>
+
+      <nav class="sidebar-nav">
+        @if (isAdmin()) {
+          <span class="nav-section">Vue d'ensemble</span>
+          <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">
+            <i class="pi pi-chart-bar"></i> Dashboard
+          </a>
+        }
+
+        <span class="nav-section">Modération</span>
+        <a class="nav-item" routerLink="/users" routerLinkActive="active">
+          <i class="pi pi-users"></i> Utilisateurs
+        </a>
+        <a class="nav-item" routerLink="/users/banned" routerLinkActive="active">
+          <i class="pi pi-ban"></i> Bannis
+        </a>
+        <a class="nav-item" routerLink="/chat" routerLinkActive="active">
+          <i class="pi pi-comments"></i> Logs Chat
+        </a>
+
+        @if (isAdmin()) {
+          <span class="nav-section">Administration</span>
+          <a class="nav-item" routerLink="/rooms" routerLinkActive="active">
+            <i class="pi pi-map"></i> Rooms
+          </a>
+          <a class="nav-item" routerLink="/items" routerLinkActive="active">
+            <i class="pi pi-box"></i> Items
+          </a>
+          <a class="nav-item" routerLink="/kreds" routerLinkActive="active">
+            <i class="pi pi-dollar"></i> Kreds
+          </a>
+
+          <span class="nav-section">Boutiques</span>
+          <a class="nav-item nav-sub" routerLink="/shops/COUPE_TIFF" routerLinkActive="active">
+            <i class="pi pi-wave-pulse"></i> Coupe Tiff
+          </a>
+          <a class="nav-item nav-sub" routerLink="/shops/IKEBO" routerLinkActive="active">
+            <i class="pi pi-home"></i> Ikebo
+          </a>
+          <a class="nav-item nav-sub" routerLink="/shops/VESTIS" routerLinkActive="active">
+            <i class="pi pi-shopping-bag"></i> Vestis
+          </a>
+        }
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar">{{ (user()?.username ?? 'U')[0] }}</div>
+        <div class="user-info">
+          <p>{{ user()?.username }}</p>
+          <small>{{ user()?.rank === 2 ? 'Administrateur' : 'Modérateur' }}</small>
+        </div>
+        <button pButton icon="pi pi-sign-out" (click)="logout()"
+                size="small" severity="secondary" [text]="true"
+                pTooltip="Déconnexion" tooltipPosition="top"></button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="layout-main">
+      <header class="layout-topbar">
+        <span class="topbar-spacer"></span>
+        <div class="topbar-user">
+          <p-tag
+            [value]="user()?.rank === 2 ? 'Admin' : 'Modo'"
+            [severity]="user()?.rank === 2 ? 'success' : 'info'"
+            styleClass="text-xs"
+          ></p-tag>
+          <span style="color: var(--text-color-secondary);">{{ user()?.username }}</span>
+        </div>
+      </header>
+      <div class="layout-content">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+
+  </div>
+} @else {
+  <router-outlet></router-outlet>
+}
+
+<p-toast></p-toast>

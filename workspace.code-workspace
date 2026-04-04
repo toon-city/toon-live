@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "game-core"
+		},
+		{
+			"path": "game-socket"
+		},
+		{
+			"path": "game-types"
+		},
+		{
+			"path": "game-web"
+		},
+		{
+			"path": "game-server-java"
+		}
+	],
+	"settings": {}
+}

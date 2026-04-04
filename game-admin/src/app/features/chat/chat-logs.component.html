@@ -1,0 +1,44 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <h2>Logs de chat</h2>
+  <div class="filters">
+    <input pInputText placeholder="Room ID" [(ngModel)]="filterRoomId" (ngModelChange)="load(0)" style="width:120px" />
+    <input pInputText placeholder="Pseudo / nom" [(ngModel)]="filterUsername" (ngModelChange)="load(0)" style="width:160px" />
+  </div>
+</div>
+
+<p-table
+  [value]="logs()"
+  [lazy]="true"
+  [paginator]="true"
+  [rows]="50"
+  [totalRecords]="totalRecords()"
+  [loading]="loading()"
+  (onPage)="onPage($event)"
+  styleClass="p-datatable-sm p-datatable-gridlines mt-3"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width:130px">Date</th>
+      <th style="width:100px">Room</th>
+      <th style="width:140px">Utilisateur</th>
+      <th>Message</th>
+      @if (isAdmin) { <th style="width:60px"></th> }
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-msg>
+    <tr>
+      <td class="text-xs">{{ msg.sentAt | date:'dd/MM/yy HH:mm:ss' }}</td>
+      <td><p-tag [value]="'#' + msg.roomId" severity="info" /></td>
+      <td>{{ msg.username }}</td>
+      <td class="msg-content">{{ msg.message }}</td>
+      @if (isAdmin) {
+        <td>
+          <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" (onClick)="deleteMsg(msg)" />
+        </td>
+      }
+    </tr>
+  </ng-template>
+</p-table>

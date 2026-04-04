@@ -1,0 +1,72 @@
+<div class="dashboard">
+  <h2 class="page-title">Tableau de bord</h2>
+
+  @if (dashboard()) {
+    <div class="stats-grid">
+      <p-card styleClass="stat-card">
+        <div class="stat-icon"><i class="pi pi-users"></i></div>
+        <div class="stat-value">{{ dashboard()!.dauToday }}</div>
+        <div class="stat-label">Utilisateurs actifs (aujourd'hui)</div>
+      </p-card>
+      <p-card styleClass="stat-card">
+        <div class="stat-icon"><i class="pi pi-calendar"></i></div>
+        <div class="stat-value">{{ dashboard()!.mauThisMonth }}</div>
+        <div class="stat-label">Utilisateurs actifs (mois)</div>
+      </p-card>
+      <p-card styleClass="stat-card">
+        <div class="stat-icon"><i class="pi pi-shopping-cart"></i></div>
+        <div class="stat-value">{{ dashboard()!.kredsPurchasesToday }}</div>
+        <div class="stat-label">Achats Kreds (aujourd'hui)</div>
+      </p-card>
+      <p-card styleClass="stat-card">
+        <div class="stat-icon"><i class="pi pi-dollar"></i></div>
+        <div class="stat-value">{{ dashboard()!.kredsSpentOnItemsToday }}</div>
+        <div class="stat-label">Kreds dépensés (aujourd'hui)</div>
+      </p-card>
+    </div>
+  }
+
+  <div class="charts-row mt-4">
+    <p-card header="Évolution" styleClass="chart-card">
+      <div class="chart-controls mb-3">
+        <p-dropdown [options]="metrics" [(ngModel)]="selectedMetric" optionLabel="label" optionValue="value" (onChange)="loadSeries()" />
+        <p-dropdown [options]="granularities" [(ngModel)]="selectedGranularity" optionLabel="label" optionValue="value" (onChange)="loadSeries()" styleClass="ml-2" />
+      </div>
+      @if (chartData) {
+        <p-chart type="line" [data]="chartData" [options]="chartOptions" height="250px" />
+      }
+    </p-card>
+  </div>
+
+  <div class="tables-row mt-4">
+    <p-card header="Top articles vendus" styleClass="half-card">
+      <table class="simple-table">
+        <thead><tr><th>#</th><th>Article</th><th>Ventes</th></tr></thead>
+        <tbody>
+          @for (item of topItems(); track item.itemId; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ item.name }}</td>
+              <td><p-tag [value]="item.purchaseCount.toString()" severity="info" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </p-card>
+
+    <p-card header="Top acheteurs" styleClass="half-card">
+      <table class="simple-table">
+        <thead><tr><th>#</th><th>Utilisateur</th><th>Dépenses</th></tr></thead>
+        <tbody>
+          @for (user of topUsers(); track user.userId; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ user.username }}</td>
+              <td><p-tag [value]="user.totalPez.toString()" severity="warning" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </p-card>
+  </div>
+</div>

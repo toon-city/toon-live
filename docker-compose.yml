@@ -85,9 +85,54 @@ services:
     networks:
       - toonlive
 
+  # ─────────────────────────────────────────────────────────────────────────────
+  # game-assets  (Nginx statique + Bun upload)  — port 3001
+  # ─────────────────────────────────────────────────────────────────────────────
+  game-assets:
+    build:
+      context: ./game-assets
+      dockerfile: Dockerfile
+    container_name: toonlive-assets
+    restart: unless-stopped
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      PUBLIC_DIR: /usr/share/nginx/html
+      UPLOAD_PORT: "3002"
+    volumes:
+      - assets_data:/usr/share/nginx/html
+    ports:
+      - "3001:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    networks:
+      - toonlive
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # game-admin  (Angular admin panel)  — port 4201
+  # ─────────────────────────────────────────────────────────────────────────────
+  game-admin:
+    build:
+      context: ./game-admin
+      dockerfile: Dockerfile
+    container_name: toonlive-admin
+    restart: unless-stopped
+    ports:
+      - "4201:80"
+    depends_on:
+      game-api:
+        condition: service_healthy
+    networks:
+      - toonlive
+
 volumes:
   postgres_data:
     name: toonlive-postgres-data
+  assets_data:
+    name: toonlive-assets-data
 
 networks:
   toonlive:

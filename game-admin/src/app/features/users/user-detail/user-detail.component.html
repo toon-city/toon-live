@@ -1,0 +1,76 @@
+<p-toast #toast />
+
+@if (loading()) {
+  <div class="text-center mt-5"><i class="pi pi-spin pi-spinner" style="font-size:2rem"></i></div>
+} @else if (user()) {
+  <div class="detail-layout">
+    <div class="detail-header">
+      <a routerLink="/users" class="back-link"><i class="pi pi-arrow-left"></i> Retour</a>
+      <h2>{{ user()!.username }}</h2>
+    </div>
+
+    <div class="detail-grid">
+      <p-card header="Informations" styleClass="info-card">
+        <div class="info-row"><span>ID</span><span class="mono">{{ user()!.id }}</span></div>
+        <div class="info-row"><span>Email</span><span>{{ user()!.email }}</span></div>
+        <div class="info-row"><span>Rang</span><p-tag [value]="rankLabel(user()!.rank)" /></div>
+        <div class="info-row"><span>Kreds</span><strong>{{ user()!.kreds }}</strong></div>
+        <div class="info-row"><span>Inscription</span><span>{{ user()!.createdAt | date:'dd/MM/yyyy HH:mm' }}</span></div>
+        <div class="info-row"><span>Connexion</span><span>{{ user()!.lastLoginAt | date:'dd/MM/yyyy HH:mm' }}</span></div>
+
+        @if (user()!.banned) {
+          <div class="info-row ban-info">
+            <p-tag value="BANNI" severity="danger" />
+            <div class="ban-details">
+              <span>{{ user()!.banReason }}</span>
+              <span class="text-xs">le {{ user()!.bannedAt | date:'dd/MM/yyyy' }} par {{ user()!.bannedByUsername }}</span>
+            </div>
+          </div>
+        }
+
+        <div class="actions mt-3">
+          @if (!user()!.banned) {
+            <p-button label="Bannir" icon="pi pi-ban" severity="danger" size="small" (onClick)="openBan()" />
+          } @else {
+            <p-button label="Débannir" icon="pi pi-check" severity="success" size="small" (onClick)="doUnban()" />
+          }
+          @if (isAdmin) {
+            <p-button label="Rang" icon="pi pi-shield" severity="info" [outlined]="true" size="small" (onClick)="openRank()" styleClass="ml-2" />
+          }
+        </div>
+      </p-card>
+
+      <p-card header="Informations supplémentaires" styleClass="inventory-card">
+        <p class="text-secondary">Aucun inventaire disponible via cette API.</p>
+      </p-card>
+    </div>
+  </div>
+}
+
+<!-- Ban dialog -->
+<p-dialog [(visible)]="banDialog" header="Bannir l'utilisateur" [modal]="true" [style]="{width:'400px'}">
+  <div class="field">
+    <label>Raison</label>
+    <input pInputText [(ngModel)]="banReason" placeholder="Raison..." class="w-full mt-1" />
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" [text]="true" (onClick)="banDialog = false" />
+    <p-button label="Bannir" severity="danger" (onClick)="doBan()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Rank dialog -->
+<p-dialog [(visible)]="rankDialog" header="Modifier le rang" [modal]="true" [style]="{width:'350px'}">
+  <div class="field">
+    <label>Rang</label>
+    <select [(ngModel)]="newRank" class="w-full mt-1 p-inputtext">
+      <option [value]="0">Joueur</option>
+      <option [value]="1">Modérateur</option>
+      <option [value]="2">Admin</option>
+    </select>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" [text]="true" (onClick)="rankDialog = false" />
+    <p-button label="Enregistrer" (onClick)="doUpdateRank()" />
+  </ng-template>
+</p-dialog>

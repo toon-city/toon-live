@@ -1,0 +1,205 @@
+{
+	"frames": {
+		"hair7_1.png": {
+			"frame": {
+				"x": 30,
+				"y": 30,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		},
+		"hair7_10.png": {
+			"frame": {
+				"x": 141,
+				"y": 30,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		},
+		"hair7_2.png": {
+			"frame": {
+				"x": 30,
+				"y": 135,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		},
+		"hair7_4.png": {
+			"frame": {
+				"x": 141,
+				"y": 135,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		},
+		"hair7_5.png": {
+			"frame": {
+				"x": 252,
+				"y": 30,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		},
+		"hair7_6.png": {
+			"frame": {
+				"x": 252,
+				"y": 135,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		},
+		"hair7_8.png": {
+			"frame": {
+				"x": 30,
+				"y": 240,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		},
+		"hair7_9.png": {
+			"frame": {
+				"x": 141,
+				"y": 240,
+				"w": 51,
+				"h": 45
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 51,
+				"h": 45
+			},
+			"sourceSize": {
+				"w": 51,
+				"h": 45
+			}
+		}
+	},
+	"position": {
+		"1": {
+			"x": 17,
+			"y": 19
+		},
+		"4": {
+			"x": 19,
+			"y": 14
+		},
+		"5": {
+			"x": 17,
+			"y": 19
+		},
+		"6": {
+			"x": 16,
+			"y": 18
+		},
+		"8": {
+			"x": 5,
+			"y": 15
+		},
+		"9": {
+			"x": 11,
+			"y": 18
+		},
+		"10": {
+			"x": 9,
+			"y": 17
+		}
+	},
+	"meta": {
+		
+		"version": "1.0",
+		"image": "hair7.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 333,
+			"h": 315
+		},
+		"scale": "1"
+	}
+}

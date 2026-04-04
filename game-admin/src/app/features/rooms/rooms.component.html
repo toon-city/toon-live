@@ -1,0 +1,71 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <h2>Salles</h2>
+  <span class="p-input-icon-left">
+    <i class="pi pi-search"></i>
+    <input pInputText placeholder="Rechercher..." [(ngModel)]="search" (ngModelChange)="load(0)" />
+  </span>
+</div>
+
+<p-table
+  [value]="rooms()"
+  [lazy]="true"
+  [paginator]="true"
+  [rows]="20"
+  [totalRecords]="totalRecords()"
+  [loading]="loading()"
+  (onPage)="onPage($event)"
+  styleClass="p-datatable-sm p-datatable-gridlines mt-3"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Propriétaire</th>
+      <th>Joueurs</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-room>
+    <tr>
+      <td>{{ room.id }}</td>
+      <td>{{ room.name }}</td>
+      <td>{{ room.owner?.username ?? '—' }}</td>
+      <td>{{ room.userCount }} / {{ room.maxUsers }}</td>
+      <td>
+        @if (room.locked) {
+          <p-tag value="Verrouillée" icon="pi pi-lock" severity="warning" />
+        } @else {
+          <p-tag value="Ouverte" icon="pi pi-unlock" severity="success" />
+        }
+      </td>
+      <td class="actions-cell">
+        <p-button icon="pi pi-pencil" [text]="true" size="small" (onClick)="openEdit(room)" pTooltip="Modifier" />
+        <p-button [icon]="room.locked ? 'pi pi-unlock' : 'pi pi-lock'" [text]="true" size="small" (onClick)="toggleLock(room)" [pTooltip]="room.locked ? 'Déverrouiller' : 'Verrouiller'" />
+        <p-button icon="pi pi-sign-out" severity="warning" [text]="true" size="small" (onClick)="kickAll(room)" pTooltip="Expulser tous" />
+        <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" (onClick)="deleteRoom(room)" pTooltip="Supprimer" />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- Edit dialog -->
+<p-dialog [(visible)]="editDialog" [header]="'Modifier: ' + editRoom?.name" [modal]="true" [style]="{width:'420px'}">
+  <form [formGroup]="editForm">
+    <div class="field">
+      <label>Nom</label>
+      <input pInputText formControlName="name" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Max joueurs</label>
+      <input pInputText type="number" formControlName="maxUsers" class="w-full mt-1" />
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" [text]="true" (onClick)="editDialog = false" />
+    <p-button label="Enregistrer" (onClick)="saveEdit()" [disabled]="editForm.invalid" />
+  </ng-template>
+</p-dialog>

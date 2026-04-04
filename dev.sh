@@ -49,6 +49,11 @@ tmux new-window -t "$SESSION" -n "web"
 tmux send-keys -t "$SESSION:web" \
   "sleep 4 && cd '$ROOT/game-web' && bun run start" C-m
 
+# ── Fenêtre 4 : Panel d'administration ──────────────────────────────────────────
+tmux new-window -t "$SESSION" -n "admin"
+tmux send-keys -t "$SESSION:admin" \
+  "sleep 4 && cd '$ROOT/game-admin' && npm start" C-m
+
 # ── Focus sur la fenêtre db ────────────────────────────────────────────────────
 tmux select-window -t "$SESSION:db"
 
@@ -58,11 +63,13 @@ echo "║           Toon Live — Environnement de dev           ║"
 echo "╠══════════════════════════════════════════════════════╣"
 echo "║  Fenêtres tmux :                                     ║"
 echo "║  [0] db      → PostgreSQL + Adminer (:8888)          ║"
+echo "║              → Assets statiques    (:3001)           ║"
 echo "║  [1] api     → Spring Boot :8080  (hot reload)       ║"
 echo "║  [2] server  → Spring Boot :8081  (hot reload)       ║"
 echo "║  [3] web     → Angular :4200      (HMR)              ║"
+echo "║  [4] admin   → Angular :4201      (panel admin)      ║"
 echo "╠══════════════════════════════════════════════════════╣"
-echo "║  Ctrl+B, puis 0-3 pour naviguer entre les fenêtres  ║"
+echo "║  Ctrl+B, puis 0-4 pour naviguer entre les fenêtres  ║"
 echo "║  ./dev.sh --kill  pour tout arrêter                  ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo ""

@@ -1,0 +1,35 @@
+{
+	"frames": {
+		"rond_centre_1.png": {
+			"frame": {
+				"x": 30,
+				"y": 30,
+				"w": 873,
+				"h": 483
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 873,
+				"h": 483
+			},
+			"sourceSize": {
+				"w": 873,
+				"h": 483
+			}
+		}
+	},
+	"meta": {
+		
+		"version": "1.0",
+		"image": "rond_centre.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 933,
+			"h": 543
+		},
+		"scale": "1"
+	}
+}

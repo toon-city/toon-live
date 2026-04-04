@@ -1,0 +1,53 @@
+{
+	"frames": {
+		"statut1_1.png": {
+			"frame": {
+				"x": 30,
+				"y": 30,
+				"w": 318,
+				"h": 371
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 318,
+				"h": 371
+			},
+			"sourceSize": {
+				"w": 318,
+				"h": 371
+			},
+			"points": [
+				{
+					"x": 4,
+					"y": 370
+				},
+				{
+					"x": 317,
+					"y": 261
+				},
+				{
+					"x": 211,
+					"y": 368
+				},
+				{
+					"x": 102,
+					"y": 263
+				}
+			]
+		}
+	},
+	"meta": {
+		
+		"version": "1.0",
+		"image": "statut1.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 378,
+			"h": 431
+		},
+		"scale": "1"
+	}
+}

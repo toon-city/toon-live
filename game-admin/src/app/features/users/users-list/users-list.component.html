@@ -1,0 +1,79 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <h2>Utilisateurs</h2>
+  <div class="filters">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input pInputText placeholder="Rechercher..." [(ngModel)]="search" (ngModelChange)="load(0)" />
+    </span>
+    <p-button label="Tous" [outlined]="filterBanned !== null" (onClick)="filterBanned = null; load(0)" size="small" />
+    <p-button label="Bannis" severity="danger" [outlined]="filterBanned !== true" (onClick)="filterBanned = true; load(0)" size="small" />
+  </div>
+</div>
+
+<p-table
+  [value]="users()"
+  [lazy]="true"
+  [paginator]="true"
+  [rows]="20"
+  [totalRecords]="totalRecords()"
+  [loading]="loading()"
+  (onPage)="onPage($event)"
+  styleClass="p-datatable-sm p-datatable-gridlines"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Rang</th>
+      <th>Kreds</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-user>
+    <tr>
+      <td class="text-xs text-secondary">{{ user.id }}</td>
+      <td>
+        <a [routerLink]="['/users', user.id]" class="user-link">{{ user.username }}</a>
+      </td>
+      <td>{{ user.email }}</td>
+      <td>
+        <p-tag [value]="rankLabel(user.rank)" [severity]="rankSeverity(user.rank)" />
+      </td>
+      <td>{{ user.kreds }}</td>
+      <td>
+        @if (user.banned) {
+          <p-tag value="Banni" severity="danger" />
+        } @else {
+          <p-tag value="Actif" severity="success" />
+        }
+      </td>
+      <td>
+        @if (!user.banned) {
+          <p-button icon="pi pi-ban" severity="danger" [text]="true" size="small" (onClick)="openBan(user)" pTooltip="Bannir" />
+        } @else {
+          <p-button icon="pi pi-check-circle" severity="success" [text]="true" size="small" (onClick)="unban(user)" pTooltip="Débannir" />
+        }
+        <p-button icon="pi pi-eye" [text]="true" size="small" [routerLink]="['/users', user.id]" pTooltip="Détails" />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="banDialog" header="Bannir l'utilisateur" [modal]="true" [style]="{width: '450px'}">
+  @if (banTarget) {
+    <p>Bannir <strong>{{ banTarget.username }}</strong> ?</p>
+    <div class="field mt-3">
+      <label>Raison</label>
+      <input pInputText [(ngModel)]="banReason" placeholder="Raison du ban..." class="w-full mt-1" />
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button label="Annuler" [text]="true" (onClick)="banDialog = false" />
+      <p-button label="Bannir" severity="danger" (onClick)="confirmBan()" />
+    </ng-template>
+  }
+</p-dialog>

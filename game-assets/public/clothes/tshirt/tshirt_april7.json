@@ -1,0 +1,541 @@
+{
+	"frames": {
+		"tshirt_april7_arm_1_0.png": {
+			"frame": {
+				"x": 30,
+				"y": 30,
+				"w": 13,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 13,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 13,
+				"h": 36
+			}
+		},
+		"tshirt_april7_arm_1_1.png": {
+			"frame": {
+				"x": 103,
+				"y": 30,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_2.png": {
+			"frame": {
+				"x": 188,
+				"y": 30,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_3.png": {
+			"frame": {
+				"x": 273,
+				"y": 30,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_4.png": {
+			"frame": {
+				"x": 358,
+				"y": 30,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_5.png": {
+			"frame": {
+				"x": 30,
+				"y": 128,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_6.png": {
+			"frame": {
+				"x": 115,
+				"y": 128,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_7.png": {
+			"frame": {
+				"x": 200,
+				"y": 128,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_8.png": {
+			"frame": {
+				"x": 285,
+				"y": 128,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_1_9.png": {
+			"frame": {
+				"x": 370,
+				"y": 128,
+				"w": 25,
+				"h": 38
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 25,
+				"h": 38
+			},
+			"sourceSize": {
+				"w": 25,
+				"h": 38
+			}
+		},
+		"tshirt_april7_arm_2_0.png": {
+			"frame": {
+				"x": 30,
+				"y": 226,
+				"w": 12,
+				"h": 34
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 12,
+				"h": 34
+			},
+			"sourceSize": {
+				"w": 12,
+				"h": 34
+			}
+		},
+		"tshirt_april7_arm_2_1.png": {
+			"frame": {
+				"x": 102,
+				"y": 226,
+				"w": 21,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 21,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 21,
+				"h": 36
+			}
+		},
+		"tshirt_april7_arm_2_2.png": {
+			"frame": {
+				"x": 183,
+				"y": 226,
+				"w": 21,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 21,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 21,
+				"h": 36
+			}
+		},
+		"tshirt_april7_arm_2_3.png": {
+			"frame": {
+				"x": 264,
+				"y": 226,
+				"w": 21,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 21,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 21,
+				"h": 36
+			}
+		},
+		"tshirt_april7_arm_2_4.png": {
+			"frame": {
+				"x": 345,
+				"y": 226,
+				"w": 21,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 21,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 21,
+				"h": 36
+			}
+		},
+		"tshirt_april7_arm_2_5.png": {
+			"frame": {
+				"x": 30,
+				"y": 322,
+				"w": 21,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 21,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 21,
+				"h": 36
+			}
+		},
+		"tshirt_april7_arm_2_6.png": {
+			"frame": {
+				"x": 111,
+				"y": 322,
+				"w": 21,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 21,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 21,
+				"h": 36
+			}
+		},
+		"tshirt_april7_bd_1.png": {
+			"frame": {
+				"x": 192,
+				"y": 322,
+				"w": 38,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 38,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 38,
+				"h": 32
+			}
+		},
+		"tshirt_april7_bd_10.png": {
+			"frame": {
+				"x": 290,
+				"y": 322,
+				"w": 31,
+				"h": 30
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 31,
+				"h": 30
+			},
+			"sourceSize": {
+				"w": 31,
+				"h": 30
+			}
+		},
+		"tshirt_april7_bd_2.png": {
+			"frame": {
+				"x": 381,
+				"y": 322,
+				"w": 38,
+				"h": 32
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 38,
+				"h": 32
+			},
+			"sourceSize": {
+				"w": 38,
+				"h": 32
+			}
+		},
+		"tshirt_april7_bd_4.png": {
+			"frame": {
+				"x": 443,
+				"y": 30,
+				"w": 30,
+				"h": 28
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 30,
+				"h": 28
+			},
+			"sourceSize": {
+				"w": 30,
+				"h": 28
+			}
+		},
+		"tshirt_april7_bd_5.png": {
+			"frame": {
+				"x": 455,
+				"y": 118,
+				"w": 34,
+				"h": 30
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 34,
+				"h": 30
+			},
+			"sourceSize": {
+				"w": 34,
+				"h": 30
+			}
+		},
+		"tshirt_april7_bd_6.png": {
+			"frame": {
+				"x": 455,
+				"y": 208,
+				"w": 31,
+				"h": 30
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 31,
+				"h": 30
+			},
+			"sourceSize": {
+				"w": 31,
+				"h": 30
+			}
+		},
+		"tshirt_april7_bd_8.png": {
+			"frame": {
+				"x": 479,
+				"y": 298,
+				"w": 30,
+				"h": 28
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 30,
+				"h": 28
+			},
+			"sourceSize": {
+				"w": 30,
+				"h": 28
+			}
+		},
+		"tshirt_april7_bd_9.png": {
+			"frame": {
+				"x": 192,
+				"y": 414,
+				"w": 34,
+				"h": 30
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 34,
+				"h": 30
+			},
+			"sourceSize": {
+				"w": 34,
+				"h": 30
+			}
+		}
+	},
+	"position": {
+		"1": {
+			"x": 20,
+			"y": 63
+		},
+		"4": {
+			"x": 30,
+			"y": 63
+		},
+		"5": {
+			"x": 29,
+			"y": 63
+		},
+		"6": {
+			"x": 25,
+			"y": 63
+		},
+		"9": {
+			"x": 18,
+			"y": 63
+		},
+		"10": {
+			"x": 23,
+			"y": 63
+		}
+	},
+	"meta": {
+		
+		"version": "1.0",
+		"image": "tshirt_april7.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 539,
+			"h": 474
+		},
+		"scale": "1"
+	}
+}

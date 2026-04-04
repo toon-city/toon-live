@@ -1,0 +1,25 @@
+<div class="login-wrapper">
+  <p-card header="🛡️ Toon-Live Admin" styleClass="login-card">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label for="username">Nom d'utilisateur</label>
+        <input pInputText id="username" formControlName="username" placeholder="admin" class="w-full" />
+      </div>
+      <div class="field mt-3">
+        <label for="password">Mot de passe</label>
+        <p-password id="password" formControlName="password" [feedback]="false" styleClass="w-full" inputStyleClass="w-full" />
+      </div>
+      @if (error) {
+        <p-message severity="error" [text]="error" styleClass="w-full mt-3" />
+      }
+      <p-button
+        type="submit"
+        label="Connexion"
+        icon="pi pi-sign-in"
+        styleClass="w-full mt-4"
+        [loading]="loading"
+        [disabled]="form.invalid || loading"
+      />
+    </form>
+  </p-card>
+</div>

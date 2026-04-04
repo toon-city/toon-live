@@ -1,0 +1,12 @@
+{
+  "name": "game-assets-upload",
+  "version": "1.0.0",
+  "description": "Bun upload server for game-assets",
+  "module": "src/server.ts",
+  "scripts": {
+    "start": "bun run src/server.ts"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}
