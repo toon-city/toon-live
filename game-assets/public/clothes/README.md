@@ -44,6 +44,50 @@ diagram at the top of `game-core/src/game/avatar/Avatar.ts`). A clothing item
 needs one frame per direction it supports, named `{id}_{direction}.png` (or
 `{id}_bd_{direction}.png` for a tshirt's torso layer — see `Tshirt.ts`).
 
+## Arm sleeves (tshirt, and anything else that needs them)
+
+Most sleeved items cover the arm on every direction except front/back
+(`1`/`2`) — the bare torso texture handles those, the arm shows through
+unclothed. A sleeve is a **separate animated overlay**, not part of the
+item's own static frame: it has to sit at the exact z-order of the body arm
+it covers (the right sleeve behind the torso like the back arm, the left one
+in front like the front arm) and animate in lockstep with it — see
+`ClotheSleeve.ts` in game-core.
+
+Frame naming: `{id}_al_{direction}_{n}.png` (left arm) and
+`{id}_ar_{direction}_{n}.png` (right arm), `n` starting at `0`. Same 80×120
+trim contract as above.
+
+**The frame count for `n` must exactly match the avatar body's own walk-cycle
+length for that direction and side** (`al_wlk_{direction}` /
+`ar_wlk_{direction}` in `game-core/assets/toon/toon.json`'s `animations`).
+That length already includes the body's own held/repeated frames for
+timing — matching it (not the count of visually distinct arm poses) is what
+keeps the sleeve frame-locked to the arm with zero manual syncing in code:
+
+| direction | al (left arm) | ar (right arm) |
+|---|---|---|
+| 1 (down)       | 3 | 3 |
+| 2 (up)         | 3 | 3 |
+| 4 (right)      | 6 | 1 |
+| 5 (down-right) | 6 | 6 |
+| 6 (up-right)   | 5 | 1 |
+| 8 (left)       | 6 | 1 |
+| 9 (down-left)  | 6 | 6 |
+| 10 (up-left)   | 5 | 1 |
+
+A direction with 1 frame there means that arm barely moves from that viewing
+angle — a sleeve for it can just be a single static image at `_0`. To match
+which pose each index actually shows (not just how many), look up that
+direction's entry in `animations` — e.g. `al_wlk_1` is
+`[human_al_1_1.png, human_al_1_0.png, human_al_1_0.png]`, so a left sleeve's
+`_1_0.png` should match the arm's `_1.png` pose and `_1_1.png`/`_1_2.png`
+both match `_0.png`'s pose (it's held for two steps).
+
+No frames for a direction (including `1`/`2` on most items) means no sleeve
+is drawn there — that's the normal, expected way to say "this item has no
+sleeve on this facing", not an error.
+
 ## Migration note (2026-09)
 
 `hair7`, `hat_april1` and `tshirt_april7` were migrated from the old
