@@ -1,0 +1,80 @@
+.studio {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.studio-header .hint {
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.item-picker {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.workspace {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.directions-panel,
+.preview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.direction-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  cursor: pointer;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border, #555);
+  background: transparent;
+  color: inherit;
+  font-size: 0.8rem;
+
+  &.active {
+    border-color: var(--primary-color, #7c9eff);
+    color: var(--primary-color, #7c9eff);
+  }
+  &.filled:not(.active) {
+    border-style: solid;
+    opacity: 0.9;
+  }
+  &.small {
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+.progress {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.publish-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}

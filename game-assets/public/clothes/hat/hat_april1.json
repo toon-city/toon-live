@@ -8,16 +8,16 @@
 				"h": 57
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 9,
+				"y": 10,
 				"w": 57,
 				"h": 57
 			},
 			"sourceSize": {
-				"w": 57,
-				"h": 57
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hat_april1_10.png": {
@@ -28,16 +28,16 @@
 				"h": 54
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 18,
+				"y": 11,
 				"w": 53,
 				"h": 54
 			},
 			"sourceSize": {
-				"w": 53,
-				"h": 54
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hat_april1_2.png": {
@@ -48,16 +48,16 @@
 				"h": 56
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 9,
+				"y": 10,
 				"w": 56,
 				"h": 56
 			},
 			"sourceSize": {
-				"w": 56,
-				"h": 56
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hat_april1_4.png": {
@@ -68,16 +68,16 @@
 				"h": 56
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 5,
+				"y": 10,
 				"w": 56,
 				"h": 56
 			},
 			"sourceSize": {
-				"w": 56,
-				"h": 56
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hat_april1_5.png": {
@@ -88,16 +88,16 @@
 				"h": 57
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 5,
+				"y": 10,
 				"w": 52,
 				"h": 57
 			},
 			"sourceSize": {
-				"w": 52,
-				"h": 57
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hat_april1_6.png": {
@@ -108,16 +108,16 @@
 				"h": 54
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 11,
+				"y": 10,
 				"w": 53,
 				"h": 54
 			},
 			"sourceSize": {
-				"w": 53,
-				"h": 54
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hat_april1_8.png": {
@@ -128,16 +128,16 @@
 				"h": 56
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 13,
+				"y": 10,
 				"w": 56,
 				"h": 56
 			},
 			"sourceSize": {
-				"w": 56,
-				"h": 56
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hat_april1_9.png": {
@@ -148,47 +148,20 @@
 				"h": 57
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 22,
+				"y": 10,
 				"w": 52,
 				"h": 57
 			},
 			"sourceSize": {
-				"w": 52,
-				"h": 57
+				"w": 80,
+				"h": 120
 			}
 		}
 	},
-	"position": {
-		"1": {
-			"x": 9,
-			"y": 10
-		},
-		"4": {
-			"x": 11,
-			"y": 10
-		},
-		"5": {
-			"x": 11,
-			"y": 10
-		},
-		"6": {
-			"x": 11,
-			"y": 10
-		},
-		"9": {
-			"x": 18,
-			"y": 10
-		},
-		"10": {
-			"x": 17,
-			"y": 11
-		}
-	},
 	"meta": {
-		
 		"version": "1.0",
 		"image": "hat_april1.png",
 		"format": "RGBA8888",
@@ -197,5 +170,6 @@
 			"h": 350
 		},
 		"scale": "1"
-	}
+	},
+	"_migrationNotes": "Directions [2, 8] had no authored offset in the old 'position' block and were migrated using direction 1's offset (matches the old runtime fallback exactly). These facings were never actually tuned \u2014 nudge their spriteSourceSize.x/y if they look off. Remove this note once fixed."
 }

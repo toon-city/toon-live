@@ -3,13 +3,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
+import { TagModule } from 'primeng/tag';
 import { MessageService } from 'primeng/api';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, ButtonModule, ToastModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, ButtonModule, ToastModule, TagModule],
   providers: [MessageService],
   templateUrl: './app.component.html',
 })

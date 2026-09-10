@@ -1,0 +1,58 @@
+<div class="editor">
+  <div class="editor-header">
+    <span class="direction-label">{{ label }}</span>
+    <span class="direction-code">dir {{ direction }}</span>
+  </div>
+
+  <div
+    class="stage"
+    [style.width.px]="canvasW * zoom"
+    [style.height.px]="canvasH * zoom"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp()"
+    (pointercancel)="onPointerUp()"
+    (wheel)="onWheel($event)"
+  >
+    <!-- Reference avatar: real Pixi Avatar, low opacity, bare body -->
+    <app-avatar-preview
+      class="reference-layer"
+      [direction]="direction"
+      [opacity]="0.45"
+    ></app-avatar-preview>
+
+    <!-- Admin's raw image, positioned/scaled against the reference -->
+    @if (placement) {
+      <img
+        class="draft-layer"
+        [src]="placement.image.src"
+        [ngStyle]="imageStyle()"
+        (pointerdown)="onPointerDown($event)"
+        draggable="false"
+      />
+    }
+  </div>
+
+  <div class="controls">
+    @if (!placement) {
+      <label class="upload-btn">
+        Choisir une image
+        <input #fileInput type="file" accept="image/png,image/webp" (change)="onFileSelected($event)" hidden />
+      </label>
+    } @else {
+      <label class="scale-control">
+        Échelle
+        <input
+          type="range"
+          min="0.1"
+          max="4"
+          step="0.01"
+          [value]="placement.scale"
+          (input)="onScaleSlider($any($event.target).valueAsNumber)"
+        />
+        <span>{{ placement.scale | number: '1.2-2' }}×</span>
+      </label>
+      <span class="readout">x: {{ placement.x | number: '1.0-1' }} · y: {{ placement.y | number: '1.0-1' }}</span>
+      <button type="button" class="remove-btn" (click)="removeImage()">Retirer</button>
+    }
+  </div>
+</div>

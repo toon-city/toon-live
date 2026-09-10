@@ -8,16 +8,16 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 17,
+				"y": 19,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hair7_10.png": {
@@ -28,16 +28,16 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 10,
+				"y": 17,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hair7_2.png": {
@@ -48,16 +48,16 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 17,
+				"y": 19,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hair7_4.png": {
@@ -68,16 +68,16 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 13,
+				"y": 14,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hair7_5.png": {
@@ -88,16 +88,16 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 11,
+				"y": 19,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hair7_6.png": {
@@ -108,16 +108,16 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 16,
+				"y": 18,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hair7_8.png": {
@@ -128,16 +128,16 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 9,
+				"y": 15,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		},
 		"hair7_9.png": {
@@ -148,51 +148,20 @@
 				"h": 45
 			},
 			"rotated": false,
-			"trimmed": false,
+			"trimmed": true,
 			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
+				"x": 15,
+				"y": 18,
 				"w": 51,
 				"h": 45
 			},
 			"sourceSize": {
-				"w": 51,
-				"h": 45
+				"w": 80,
+				"h": 120
 			}
 		}
 	},
-	"position": {
-		"1": {
-			"x": 17,
-			"y": 19
-		},
-		"4": {
-			"x": 19,
-			"y": 14
-		},
-		"5": {
-			"x": 17,
-			"y": 19
-		},
-		"6": {
-			"x": 16,
-			"y": 18
-		},
-		"8": {
-			"x": 5,
-			"y": 15
-		},
-		"9": {
-			"x": 11,
-			"y": 18
-		},
-		"10": {
-			"x": 9,
-			"y": 17
-		}
-	},
 	"meta": {
-		
 		"version": "1.0",
 		"image": "hair7.png",
 		"format": "RGBA8888",
@@ -201,5 +170,6 @@
 			"h": 315
 		},
 		"scale": "1"
-	}
+	},
+	"_migrationNotes": "Directions [2] had no authored offset in the old 'position' block and were migrated using direction 1's offset (matches the old runtime fallback exactly). These facings were never actually tuned \u2014 nudge their spriteSourceSize.x/y if they look off. Remove this note once fixed."
 }

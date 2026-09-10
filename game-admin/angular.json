@@ -23,7 +23,15 @@
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "../game-core/assets",
+                "output": "assets"
+              }
+            ],
             "styles": [
               "primeng/resources/themes/lara-dark-blue/theme.css",
               "primeng/resources/primeng.min.css",
