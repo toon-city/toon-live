@@ -44,6 +44,23 @@ diagram at the top of `game-core/src/game/avatar/Avatar.ts`). A clothing item
 needs one frame per direction it supports, named `{id}_{direction}.png` (or
 `{id}_bd_{direction}.png` for a tshirt's torso layer — see `Tshirt.ts`).
 
+## Categories
+
+Registered in `game-core/src/game/avatar/ClotheRegistry.ts`, each with a
+matching folder here and a z-order slot in `partsConfig.ts`:
+
+| category | folder      | what it is                          |
+|----------|-------------|--------------------------------------|
+| `hair`   | `hair/`     | hairstyle                            |
+| `hat`    | `hat/`      | hat, over hair                       |
+| `face`   | `face/`     | glasses/mask, over hair, under hat   |
+| `tshirt` | `tshirt/`   | torso layer (+ optional sleeves, see below) |
+| `pant`   | `pant/`     | legs, under the torso layer          |
+
+Adding a new category needs a small `Clothe` subclass (see `Hat.ts`/`Face.ts`
+— ~10 lines) plus a `ClotheRegistry.register()` call and a `PARTS_CONFIG`
+entry with the right `order`.
+
 ## Arm sleeves (tshirt, and anything else that needs them)
 
 Most sleeved items cover the arm on every direction except front/back

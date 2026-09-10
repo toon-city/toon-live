@@ -1,0 +1,97 @@
+<div class="studio">
+  <header class="studio-header">
+    <h1>Atelier vêtements</h1>
+    <p class="hint">
+      Place une image par direction contre l'avatar de référence, publie —
+      pas de traitement d'image à la main, le cadrage se fait au pixel.
+    </p>
+  </header>
+
+  <section class="item-picker">
+    <div class="field">
+      <label for="category">Catégorie</label>
+      <p-dropdown
+        id="category"
+        [options]="categories"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="category"
+        (ngModelChange)="onCategoryChange()"
+      ></p-dropdown>
+    </div>
+    <div class="field">
+      <label for="itemId">Id de l'item</label>
+      <input
+        id="itemId"
+        pInputText
+        placeholder="ex: tshirt_may1"
+        [(ngModel)]="itemId"
+        (ngModelChange)="onItemIdChange()"
+      />
+    </div>
+  </section>
+
+  <section class="workspace">
+    <div class="directions-panel">
+      <div class="direction-chips">
+        @for (d of directions; track d) {
+          <button
+            type="button"
+            class="chip"
+            [class.active]="activeDirection() === d"
+            [class.filled]="placements()[d]"
+            (click)="selectDirection(d)"
+          >
+            {{ directionLabels[d] }}
+          </button>
+        }
+      </div>
+
+      <app-direction-editor
+        [direction]="activeDirection()"
+        [placement]="placements()[activeDirection()] ?? null"
+        (placementChange)="onPlacementChange(activeDirection(), $event)"
+      ></app-direction-editor>
+
+      <p class="progress">{{ placedDirectionsCount() }} / {{ directions.length }} directions placées</p>
+    </div>
+
+    <div class="preview-panel">
+      <h2>Aperçu habillé</h2>
+      <app-avatar-preview
+        [direction]="previewDirection()"
+        [walking]="previewWalking()"
+      ></app-avatar-preview>
+
+      <div class="preview-controls">
+        <div class="direction-chips">
+          @for (d of directions; track d) {
+            <button
+              type="button"
+              class="chip small"
+              [class.active]="previewDirection() === d"
+              (click)="cycleDirectionPreview(d)"
+            >
+              {{ d }}
+            </button>
+          }
+        </div>
+        <button type="button" pButton [label]="previewWalking() ? 'Arrêter' : 'Marcher'" (click)="toggleWalking()"></button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="publish-bar">
+    <button
+      type="button"
+      pButton
+      label="Publier"
+      [disabled]="!canPublish()"
+      (click)="publish()"
+    ></button>
+
+    @if (publishResult(); as result) {
+      <p-message [severity]="result.ok ? 'success' : 'error'" [text]="result.message"></p-message>
+    }
+  </footer>
+</div>
