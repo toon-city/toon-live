@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Cache, Spritesheet, Texture, SpritesheetData } from 'pixi.js';
-import { AssetBaseUrl } from 'game-core';
+import { AssetBaseUrl } from 'game-avatar';
 import { BuiltClotheAsset } from '../clothing-draft.model';
 
 /**

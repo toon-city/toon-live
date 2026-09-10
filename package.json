@@ -2,9 +2,9 @@
   "name": "toon-live",
   "private": true,
   "workspaces": [
+    "game-avatar",
     "game-core",
     "game-types",
-    "game-server",
     "game-socket",
     "game-web"
   ],

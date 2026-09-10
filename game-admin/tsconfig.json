@@ -21,7 +21,8 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
     "paths": {
-      "game-core": ["../game-core/src/api/index.ts"]
+      "game-core": ["../game-core/src/api/index.ts"],
+      "game-avatar": ["../game-avatar/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

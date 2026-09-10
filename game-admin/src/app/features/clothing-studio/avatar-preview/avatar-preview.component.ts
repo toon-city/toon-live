@@ -9,7 +9,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Application } from 'pixi.js';
-import { Avatar, BaseTextureLoader, AssetBaseUrl } from 'game-core';
+import { Avatar, BaseTextureLoader, AssetBaseUrl } from 'game-avatar';
 import { environment } from '../../../../environments/environment';
 import { AVATAR_CANVAS_W, AVATAR_CANVAS_H, Direction } from '../clothing-draft.model';
 
