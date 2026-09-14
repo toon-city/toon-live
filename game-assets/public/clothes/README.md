@@ -178,14 +178,14 @@ worth knowing about for the next one:
   because that check drew the pant *after* the torso (wrong order,
   opposite of `partsConfig.ts`), which incidentally hid the bug. Fixed by
   anchoring the pant's *top* edge a few px above the torso's bottom edge
-  instead (`y = torsoBottom - overlap`, `overlap = 5`) — small enough to
+  instead (`y = torsoBottom - overlap`, `overlap = 9`) — small enough to
   tuck the waistband under the shirt hem, large enough that the garment
   hangs down over the leg region where it's supposed to be. **Any
   future composite check for an overlay part MUST use the real z-order
   from `partsConfig.ts`, torso-on-top included — checking with the wrong
   draw order can hide exactly this kind of bug.**
 
-The build script is `/tmp/.../scratchpad/pant_work/build_pant5.py` from the
+The build script is `/tmp/.../scratchpad/pant_work/build_pant6.py` from the
 session that produced it, not checked into this repo (one-off per source
 art dump, not a general tool — that's what clothing-studio is for going
 forward).
