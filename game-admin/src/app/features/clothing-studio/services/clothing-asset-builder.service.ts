@@ -16,6 +16,8 @@ const ATLAS_PADDING = 2;
 
 interface TrimmedFrame {
   direction: Direction;
+  /** Index within this direction's own frame array — 0 for every static item. */
+  frameIndex: number;
   crop: HTMLCanvasElement;
   spriteSourceSize: { x: number; y: number; w: number; h: number };
 }
@@ -40,7 +42,7 @@ export class ClothingAssetBuilderService {
    * nothing ends up visible (fully off-canvas placement, or a fully
    * transparent source image).
    */
-  private trimDirection(direction: Direction, placement: import('../clothing-draft.model').DirectionPlacement): TrimmedFrame | null {
+  private trimFrame(direction: Direction, frameIndex: number, placement: import('../clothing-draft.model').DirectionPlacement): TrimmedFrame | null {
     const full = document.createElement('canvas');
     full.width = AVATAR_CANVAS_W;
     full.height = AVATAR_CANVAS_H;
@@ -74,6 +76,7 @@ export class ClothingAssetBuilderService {
 
     return {
       direction,
+      frameIndex,
       crop,
       spriteSourceSize: { x: minX, y: minY, w, h },
     };
@@ -112,15 +115,22 @@ export class ClothingAssetBuilderService {
    * Build the final spritesheet from every placed direction.
    *
    * @param id       clothing item id (used in frame names and meta.image)
-   * @param namePattern  frame-name builder, e.g. `d => \`${id}_${d}.png\``
-   *                     (hair/hat/face/pant) or `d => \`${id}_bd_${d}.png\``
-   *                     (tshirt's torso layer — see Tshirt.ts) — kept a
-   *                     parameter so this service doesn't hardcode which
-   *                     category it's building for.
+   * @param namePattern  frame-name builder. For a static category (hair/hat/
+   *                     face/tshirt) this ignores `frameIndex` and returns
+   *                     `${id}_${d}.png` (or `${id}_bd_${d}.png` for
+   *                     tshirt's torso layer — see Tshirt.ts) — those
+   *                     categories' runtime (`Clothe`) only ever reads frame
+   *                     0, so their editor UI never offers a second frame to
+   *                     begin with (see CATEGORIES.hasFrameAnimation in
+   *                     clothing-studio.component.ts). An animated category
+   *                     (pant) returns `${id}_${d}_${frameIndex}.png` —
+   *                     `AnimatedClothe`'s contract, see game-assets/public/
+   *                     clothes/README.md's "Animated bottoms" section.
    */
-  build(id: string, placements: PlacementsByDirection, namePattern: (direction: Direction) => string): BuiltClotheAsset | null {
-    const trimmed = (Object.entries(placements) as [string, import('../clothing-draft.model').DirectionPlacement][])
-      .map(([d, placement]) => this.trimDirection(Number(d) as Direction, placement))
+  build(id: string, placements: PlacementsByDirection, namePattern: (direction: Direction, frameIndex: number) => string): BuiltClotheAsset | null {
+    const trimmed = (Object.entries(placements) as [string, import('../clothing-draft.model').DirectionPlacement[]][])
+      .flatMap(([d, frames]) => frames.map((placement, frameIndex) =>
+        this.trimFrame(Number(d) as Direction, frameIndex, placement)))
       .filter((f): f is TrimmedFrame => f !== null);
 
     if (trimmed.length === 0) return null;
@@ -129,7 +139,7 @@ export class ClothingAssetBuilderService {
 
     const jsonFrames: Record<string, ClotheFrameEntry> = {};
     for (const f of frames) {
-      jsonFrames[namePattern(f.direction)] = {
+      jsonFrames[namePattern(f.direction, f.frameIndex)] = {
         frame: { x: f.atlasRect.x, y: f.atlasRect.y, w: f.crop.width, h: f.crop.height },
         rotated: false,
         trimmed: true,

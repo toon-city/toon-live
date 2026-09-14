@@ -49,8 +49,9 @@
 
       <app-direction-editor
         [direction]="activeDirection()"
-        [placement]="placements()[activeDirection()] ?? null"
-        (placementChange)="onPlacementChange(activeDirection(), $event)"
+        [frames]="placements()[activeDirection()] ?? []"
+        [hasFrameAnimation]="categoryHasFrameAnimation()"
+        (framesChange)="onFramesChange(activeDirection(), $event)"
       ></app-direction-editor>
 
       <p class="progress">{{ placedDirectionsCount() }} / {{ directions.length }} directions placées</p>

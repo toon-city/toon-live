@@ -26,14 +26,27 @@ interface CategoryOption {
    *  clothing map key IS the category, so this only drives the post-publish
    *  guidance text, not the upload itself. */
   subType: string;
+  /**
+   * Can this category's items have more than one frame per direction
+   * (a walk-cycle animation, or a non-animated bottom authored the same
+   * way with just one frame — see game-assets/public/clothes/README.md's
+   * "Animated bottoms" section)? Only `pant`'s runtime (`AnimatedClothe`)
+   * reads more than frame 0 today — every other category still uses the
+   * static `Clothe`, so their editor never offers a second frame: nothing
+   * downstream would ever read it, and the name pattern for those
+   * categories collapses every frameIndex to the same file name, which
+   * would silently overwrite frame 0 with frame 1's crop instead of
+   * producing anything useful.
+   */
+  hasFrameAnimation: boolean;
 }
 
 const CATEGORIES: CategoryOption[] = [
-  { value: 'hair',   label: 'Cheveux',        subType: 'HAIRSTYLE' },
-  { value: 'hat',    label: 'Chapeau',        subType: 'HAT' },
-  { value: 'face',   label: 'Visage (lunettes, masque)', subType: 'MAKEUP' },
-  { value: 'tshirt', label: 'Haut (torse)',   subType: 'TOP' },
-  { value: 'pant',   label: 'Pantalon',       subType: 'BOTTOM' },
+  { value: 'hair',   label: 'Cheveux',        subType: 'HAIRSTYLE', hasFrameAnimation: false },
+  { value: 'hat',    label: 'Chapeau',        subType: 'HAT', hasFrameAnimation: false },
+  { value: 'face',   label: 'Visage (lunettes, masque)', subType: 'MAKEUP', hasFrameAnimation: false },
+  { value: 'tshirt', label: 'Haut (torse)',   subType: 'TOP', hasFrameAnimation: false },
+  { value: 'pant',   label: 'Pantalon',       subType: 'BOTTOM', hasFrameAnimation: true },
 ];
 
 const PREVIEW_DEBOUNCE_MS = 150;
@@ -84,6 +97,10 @@ export class ClothingStudioComponent {
     this.categories.find(c => c.value === this.category())?.subType ?? ''
   );
 
+  readonly categoryHasFrameAnimation = computed(() =>
+    this.categories.find(c => c.value === this.category())?.hasFrameAnimation ?? false
+  );
+
   private previewDebounceHandle: ReturnType<typeof setTimeout> | null = null;
 
   onCategoryChange(): void {
@@ -99,10 +116,11 @@ export class ClothingStudioComponent {
     this.schedulePreviewRefresh();
   }
 
-  onPlacementChange(direction: Direction, placement: PlacementsByDirection[Direction] | null): void {
+  /** `frames` empty or undefined removes this direction entirely (same as the old single-placement "null" case). */
+  onFramesChange(direction: Direction, frames: PlacementsByDirection[Direction]): void {
     this.placements.update(current => {
       const next = { ...current };
-      if (placement) next[direction] = placement;
+      if (frames && frames.length > 0) next[direction] = frames;
       else delete next[direction];
       return next;
     });
@@ -113,11 +131,11 @@ export class ClothingStudioComponent {
     this.activeDirection.set(direction);
   }
 
-  private namePattern(): (direction: Direction) => string {
+  private namePattern(): (direction: Direction, frameIndex: number) => string {
     const id = this.itemId().trim();
-    return this.category() === 'tshirt'
-      ? (d: Direction) => `${id}_bd_${d}.png`
-      : (d: Direction) => `${id}_${d}.png`;
+    if (this.category() === 'tshirt') return (d: Direction) => `${id}_bd_${d}.png`;
+    if (this.categoryHasFrameAnimation()) return (d: Direction, n: number) => `${id}_${d}_${n}.png`;
+    return (d: Direction) => `${id}_${d}.png`;
   }
 
   private buildDraft(): BuiltClotheAsset | null {

@@ -21,10 +21,10 @@
     ></app-avatar-preview>
 
     <!-- Admin's raw image, positioned/scaled against the reference -->
-    @if (placement) {
+    @if (activeFrame) {
       <img
         class="draft-layer"
-        [src]="placement.image.src"
+        [src]="activeFrame.image.src"
         [ngStyle]="imageStyle()"
         (pointerdown)="onPointerDown($event)"
         draggable="false"
@@ -32,12 +32,31 @@
     }
   </div>
 
+  <input #fileInput type="file" accept="image/png,image/webp" (change)="onFileSelected($event)" hidden />
+
+  @if (hasFrameAnimation) {
+    <div class="frame-strip">
+      @for (f of frames; track $index) {
+        <button
+          type="button"
+          class="frame-chip"
+          [class.active]="$index === selectedFrameIndex"
+          (click)="selectFrame($index)"
+        >
+          {{ $index }}
+        </button>
+      }
+      <button type="button" class="frame-chip add" (click)="addFrame()" title="Ajouter une frame">+</button>
+    </div>
+    <p class="hint">
+      Une seule frame = image statique pour cette direction (ex : une jupe
+      sans animation). Plusieurs frames = cycle de marche, dans l'ordre.
+    </p>
+  }
+
   <div class="controls">
-    @if (!placement) {
-      <label class="upload-btn">
-        Choisir une image
-        <input #fileInput type="file" accept="image/png,image/webp" (change)="onFileSelected($event)" hidden />
-      </label>
+    @if (!activeFrame) {
+      <button type="button" class="upload-btn" (click)="fileInput.click()">Choisir une image</button>
     } @else {
       <label class="scale-control">
         Échelle
@@ -46,12 +65,12 @@
           min="0.1"
           max="4"
           step="0.01"
-          [value]="placement.scale"
+          [value]="activeFrame.scale"
           (input)="onScaleSlider($any($event.target).valueAsNumber)"
         />
-        <span>{{ placement.scale | number: '1.2-2' }}×</span>
+        <span>{{ activeFrame.scale | number: '1.2-2' }}×</span>
       </label>
-      <span class="readout">x: {{ placement.x | number: '1.0-1' }} · y: {{ placement.y | number: '1.0-1' }}</span>
+      <span class="readout">x: {{ activeFrame.x | number: '1.0-1' }} · y: {{ activeFrame.y | number: '1.0-1' }}</span>
       <button type="button" class="remove-btn" (click)="removeImage()">Retirer</button>
     }
   </div>
