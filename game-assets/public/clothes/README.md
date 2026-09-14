@@ -67,9 +67,9 @@ Most sleeved items cover the arm on every direction except front/back
 (`1`/`2`) — the bare torso texture handles those, the arm shows through
 unclothed. A sleeve is a **separate animated overlay**, not part of the
 item's own static frame: it has to sit at the exact z-order of the body arm
-it covers (whatever `partsConfig.ts` currently gives that arm — both arms
-render in front of the shirt as of this writing) and animate in lockstep
-with it — see `ClotheSleeve.ts` in game-avatar.
+it covers (whatever `partsConfig.ts` currently gives that arm — right arm
+behind the torso, left in front, as of this writing) and animate in
+lockstep with it — see `ClotheSleeve.ts` in game-avatar.
 
 Frame naming: `{id}_al_{direction}_{n}.png` (left arm) and
 `{id}_ar_{direction}_{n}.png` (right arm), `n` starting at `0`. Same 80×120
