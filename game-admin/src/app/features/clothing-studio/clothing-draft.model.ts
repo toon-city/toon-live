@@ -35,7 +35,15 @@ export interface DirectionPlacement {
   scale: number;
 }
 
-export type PlacementsByDirection = Partial<Record<Direction, DirectionPlacement>>;
+/**
+ * One or more frames per direction. Index 0 is the only frame a static
+ * item (hair, hat, face, tshirt, or a non-animated pant like a skirt) ever
+ * has — the array shape is shared by every category so the same editor UI
+ * and builder pipeline work for both; a category doesn't declare up front
+ * whether it "is" animated, an item just has however many frames it has.
+ * See game-assets/public/clothes/README.md's "Animated bottoms" section.
+ */
+export type PlacementsByDirection = Partial<Record<Direction, DirectionPlacement[]>>;
 
 /** TexturePacker-contract frame entry — see game-assets/public/clothes/README.md. */
 export interface ClotheFrameEntry {

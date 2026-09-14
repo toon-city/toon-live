@@ -71,3 +71,39 @@
   background: none;
   border: none;
 }
+
+.frame-strip {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.frame-chip {
+  cursor: pointer;
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--surface-border, #666);
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+
+  &.active {
+    border-color: var(--primary-color, #60a5fa);
+    background: var(--primary-color, #60a5fa);
+    color: #fff;
+  }
+
+  &.add {
+    border-style: dashed;
+    font-weight: 700;
+  }
+}
+
+.hint {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  text-align: center;
+  margin: 0;
+}
