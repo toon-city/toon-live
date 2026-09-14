@@ -2,18 +2,18 @@
   "frames": {
     "pant1_5_3.png": {
       "frame": {
-        "x": 205,
+        "x": 1,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -22,18 +22,18 @@
     },
     "pant1_5_4.png": {
       "frame": {
-        "x": 239,
+        "x": 39,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -42,18 +42,18 @@
     },
     "pant1_5_6.png": {
       "frame": {
-        "x": 273,
+        "x": 77,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -62,18 +62,18 @@
     },
     "pant1_5_7.png": {
       "frame": {
-        "x": 307,
+        "x": 115,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -82,18 +82,18 @@
     },
     "pant1_6_4.png": {
       "frame": {
-        "x": 341,
+        "x": 153,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 21,
-        "y": 86,
-        "w": 33,
-        "h": 27
+        "x": 20,
+        "y": 87,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -102,18 +102,18 @@
     },
     "pant1_6_5.png": {
       "frame": {
-        "x": 375,
+        "x": 191,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 21,
-        "y": 86,
-        "w": 33,
-        "h": 27
+        "x": 20,
+        "y": 87,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -122,18 +122,18 @@
     },
     "pant1_9_3.png": {
       "frame": {
-        "x": 1,
+        "x": 229,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -142,18 +142,18 @@
     },
     "pant1_9_4.png": {
       "frame": {
-        "x": 35,
+        "x": 267,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -162,18 +162,18 @@
     },
     "pant1_9_6.png": {
       "frame": {
-        "x": 69,
+        "x": 305,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -182,18 +182,18 @@
     },
     "pant1_9_7.png": {
       "frame": {
-        "x": 103,
+        "x": 343,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 27
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -202,18 +202,18 @@
     },
     "pant1_10_4.png": {
       "frame": {
-        "x": 137,
+        "x": 381,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 86,
-        "w": 33,
-        "h": 27
+        "x": 21,
+        "y": 87,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -222,18 +222,18 @@
     },
     "pant1_10_5.png": {
       "frame": {
-        "x": 171,
+        "x": 419,
         "y": 1,
-        "w": 33,
-        "h": 27
+        "w": 37,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 86,
-        "w": 33,
-        "h": 27
+        "x": 21,
+        "y": 87,
+        "w": 37,
+        "h": 30
       },
       "sourceSize": {
         "w": 80,
@@ -242,18 +242,18 @@
     },
     "pant1_1_0.png": {
       "frame": {
-        "x": 409,
+        "x": 457,
         "y": 1,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -262,18 +262,18 @@
     },
     "pant1_1_1.png": {
       "frame": {
-        "x": 454,
-        "y": 1,
-        "w": 44,
-        "h": 26
+        "x": 1,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -282,18 +282,18 @@
     },
     "pant1_1_2.png": {
       "frame": {
-        "x": 1,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 51,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -302,18 +302,18 @@
     },
     "pant1_1_3.png": {
       "frame": {
-        "x": 46,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 101,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -322,18 +322,18 @@
     },
     "pant1_1_4.png": {
       "frame": {
-        "x": 91,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 151,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -342,18 +342,18 @@
     },
     "pant1_1_5.png": {
       "frame": {
-        "x": 136,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 201,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -362,18 +362,18 @@
     },
     "pant1_1_6.png": {
       "frame": {
-        "x": 181,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 251,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -382,18 +382,18 @@
     },
     "pant1_1_7.png": {
       "frame": {
-        "x": 226,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 301,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -402,18 +402,18 @@
     },
     "pant1_2_0.png": {
       "frame": {
-        "x": 271,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 351,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -422,18 +422,18 @@
     },
     "pant1_2_1.png": {
       "frame": {
-        "x": 316,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 401,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -442,18 +442,18 @@
     },
     "pant1_2_2.png": {
       "frame": {
-        "x": 361,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 451,
+        "y": 32,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -462,18 +462,18 @@
     },
     "pant1_2_3.png": {
       "frame": {
-        "x": 406,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 1,
+        "y": 62,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -482,18 +482,18 @@
     },
     "pant1_2_4.png": {
       "frame": {
-        "x": 451,
-        "y": 29,
-        "w": 44,
-        "h": 26
+        "x": 51,
+        "y": 62,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -502,18 +502,18 @@
     },
     "pant1_2_5.png": {
       "frame": {
-        "x": 1,
-        "y": 56,
-        "w": 44,
-        "h": 26
+        "x": 101,
+        "y": 62,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -522,18 +522,18 @@
     },
     "pant1_2_6.png": {
       "frame": {
-        "x": 46,
-        "y": 56,
-        "w": 44,
-        "h": 26
+        "x": 151,
+        "y": 62,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -542,18 +542,18 @@
     },
     "pant1_2_7.png": {
       "frame": {
-        "x": 91,
-        "y": 56,
-        "w": 44,
-        "h": 26
+        "x": 201,
+        "y": 62,
+        "w": 49,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 17,
+        "x": 14,
         "y": 87,
-        "w": 44,
-        "h": 26
+        "w": 49,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -562,18 +562,18 @@
     },
     "pant1_5_2.png": {
       "frame": {
-        "x": 340,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 251,
+        "y": 62,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 26
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -582,18 +582,18 @@
     },
     "pant1_5_5.png": {
       "frame": {
-        "x": 374,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 289,
+        "y": 62,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 26
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -602,18 +602,18 @@
     },
     "pant1_5_8.png": {
       "frame": {
-        "x": 408,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 327,
+        "y": 62,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 26
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -622,18 +622,18 @@
     },
     "pant1_6_0.png": {
       "frame": {
-        "x": 442,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 365,
+        "y": 62,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 21,
-        "y": 86,
-        "w": 33,
-        "h": 26
+        "x": 20,
+        "y": 87,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -642,18 +642,18 @@
     },
     "pant1_6_2.png": {
       "frame": {
-        "x": 476,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 403,
+        "y": 62,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 21,
-        "y": 86,
-        "w": 33,
-        "h": 26
+        "x": 20,
+        "y": 87,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -662,18 +662,18 @@
     },
     "pant1_6_3.png": {
       "frame": {
-        "x": 1,
-        "y": 83,
-        "w": 33,
-        "h": 26
+        "x": 441,
+        "y": 62,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 21,
-        "y": 86,
-        "w": 33,
-        "h": 26
+        "x": 20,
+        "y": 87,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -682,18 +682,18 @@
     },
     "pant1_9_2.png": {
       "frame": {
-        "x": 136,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 1,
+        "y": 92,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 26
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -702,18 +702,18 @@
     },
     "pant1_9_5.png": {
       "frame": {
-        "x": 170,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 39,
+        "y": 92,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 26
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -722,18 +722,18 @@
     },
     "pant1_9_8.png": {
       "frame": {
-        "x": 204,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 77,
+        "y": 92,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 26
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -742,18 +742,18 @@
     },
     "pant1_10_0.png": {
       "frame": {
-        "x": 238,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 115,
+        "y": 92,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 86,
-        "w": 33,
-        "h": 26
+        "x": 21,
+        "y": 87,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -762,18 +762,18 @@
     },
     "pant1_10_2.png": {
       "frame": {
-        "x": 272,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 153,
+        "y": 92,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 86,
-        "w": 33,
-        "h": 26
+        "x": 21,
+        "y": 87,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -782,18 +782,18 @@
     },
     "pant1_10_3.png": {
       "frame": {
-        "x": 306,
-        "y": 56,
-        "w": 33,
-        "h": 26
+        "x": 191,
+        "y": 92,
+        "w": 37,
+        "h": 29
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 86,
-        "w": 33,
-        "h": 26
+        "x": 21,
+        "y": 87,
+        "w": 37,
+        "h": 29
       },
       "sourceSize": {
         "w": 80,
@@ -802,18 +802,18 @@
     },
     "pant1_4_1.png": {
       "frame": {
-        "x": 35,
-        "y": 83,
-        "w": 30,
-        "h": 25
+        "x": 229,
+        "y": 92,
+        "w": 34,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 86,
-        "w": 30,
-        "h": 25
+        "x": 23,
+        "y": 87,
+        "w": 34,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -822,18 +822,18 @@
     },
     "pant1_4_2.png": {
       "frame": {
-        "x": 66,
-        "y": 83,
-        "w": 31,
-        "h": 25
+        "x": 264,
+        "y": 92,
+        "w": 35,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 86,
-        "w": 31,
-        "h": 25
+        "x": 23,
+        "y": 87,
+        "w": 35,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -842,18 +842,18 @@
     },
     "pant1_4_3.png": {
       "frame": {
-        "x": 98,
-        "y": 83,
-        "w": 30,
-        "h": 25
+        "x": 300,
+        "y": 92,
+        "w": 34,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 86,
-        "w": 30,
-        "h": 25
+        "x": 23,
+        "y": 87,
+        "w": 34,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -862,18 +862,18 @@
     },
     "pant1_5_1.png": {
       "frame": {
-        "x": 292,
-        "y": 83,
-        "w": 33,
-        "h": 25
+        "x": 335,
+        "y": 92,
+        "w": 37,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 25
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -882,18 +882,18 @@
     },
     "pant1_6_1.png": {
       "frame": {
-        "x": 326,
-        "y": 83,
-        "w": 34,
-        "h": 25
+        "x": 373,
+        "y": 92,
+        "w": 38,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 21,
-        "y": 86,
-        "w": 34,
-        "h": 25
+        "x": 20,
+        "y": 87,
+        "w": 38,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -902,18 +902,18 @@
     },
     "pant1_8_1.png": {
       "frame": {
-        "x": 198,
-        "y": 83,
-        "w": 30,
-        "h": 25
+        "x": 412,
+        "y": 92,
+        "w": 34,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 30,
-        "h": 25
+        "x": 22,
+        "y": 88,
+        "w": 34,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -922,18 +922,18 @@
     },
     "pant1_8_2.png": {
       "frame": {
-        "x": 229,
-        "y": 83,
-        "w": 31,
-        "h": 25
+        "x": 447,
+        "y": 92,
+        "w": 35,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 22,
-        "y": 90,
-        "w": 31,
-        "h": 25
+        "x": 21,
+        "y": 88,
+        "w": 35,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -942,18 +942,18 @@
     },
     "pant1_8_3.png": {
       "frame": {
-        "x": 261,
-        "y": 83,
-        "w": 30,
-        "h": 25
+        "x": 1,
+        "y": 122,
+        "w": 34,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 30,
-        "h": 25
+        "x": 22,
+        "y": 88,
+        "w": 34,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -962,18 +962,18 @@
     },
     "pant1_9_1.png": {
       "frame": {
-        "x": 129,
-        "y": 83,
-        "w": 33,
-        "h": 25
+        "x": 36,
+        "y": 122,
+        "w": 37,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 25
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -982,18 +982,18 @@
     },
     "pant1_10_1.png": {
       "frame": {
-        "x": 163,
-        "y": 83,
-        "w": 34,
-        "h": 25
+        "x": 74,
+        "y": 122,
+        "w": 38,
+        "h": 28
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 22,
-        "y": 86,
-        "w": 34,
-        "h": 25
+        "x": 20,
+        "y": 87,
+        "w": 38,
+        "h": 28
       },
       "sourceSize": {
         "w": 80,
@@ -1002,18 +1002,18 @@
     },
     "pant1_4_0.png": {
       "frame": {
-        "x": 361,
-        "y": 83,
-        "w": 31,
-        "h": 24
+        "x": 113,
+        "y": 122,
+        "w": 35,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 86,
-        "w": 31,
-        "h": 24
+        "x": 22,
+        "y": 87,
+        "w": 35,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1022,18 +1022,18 @@
     },
     "pant1_4_4.png": {
       "frame": {
-        "x": 393,
-        "y": 83,
-        "w": 31,
-        "h": 24
+        "x": 149,
+        "y": 122,
+        "w": 35,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 86,
-        "w": 31,
-        "h": 24
+        "x": 22,
+        "y": 87,
+        "w": 35,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1042,18 +1042,18 @@
     },
     "pant1_4_5.png": {
       "frame": {
-        "x": 425,
-        "y": 83,
-        "w": 33,
-        "h": 24
+        "x": 185,
+        "y": 122,
+        "w": 37,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 22,
-        "y": 86,
-        "w": 33,
-        "h": 24
+        "x": 21,
+        "y": 87,
+        "w": 37,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1062,18 +1062,18 @@
     },
     "pant1_4_7.png": {
       "frame": {
-        "x": 459,
-        "y": 83,
-        "w": 33,
-        "h": 24
+        "x": 223,
+        "y": 122,
+        "w": 37,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 22,
-        "y": 86,
-        "w": 33,
-        "h": 24
+        "x": 21,
+        "y": 87,
+        "w": 37,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1082,18 +1082,18 @@
     },
     "pant1_5_0.png": {
       "frame": {
-        "x": 167,
-        "y": 110,
-        "w": 33,
-        "h": 24
+        "x": 261,
+        "y": 122,
+        "w": 37,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 24,
-        "y": 90,
-        "w": 33,
-        "h": 24
+        "x": 21,
+        "y": 89,
+        "w": 37,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1102,18 +1102,18 @@
     },
     "pant1_8_0.png": {
       "frame": {
-        "x": 35,
-        "y": 110,
-        "w": 31,
-        "h": 24
+        "x": 299,
+        "y": 122,
+        "w": 35,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 31,
-        "h": 24
+        "x": 22,
+        "y": 88,
+        "w": 35,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1122,18 +1122,18 @@
     },
     "pant1_8_4.png": {
       "frame": {
-        "x": 67,
-        "y": 110,
-        "w": 31,
-        "h": 24
+        "x": 335,
+        "y": 122,
+        "w": 35,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 31,
-        "h": 24
+        "x": 22,
+        "y": 88,
+        "w": 35,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1142,18 +1142,18 @@
     },
     "pant1_8_5.png": {
       "frame": {
-        "x": 99,
-        "y": 110,
-        "w": 33,
-        "h": 24
+        "x": 371,
+        "y": 122,
+        "w": 37,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 22,
-        "y": 90,
-        "w": 33,
-        "h": 24
+        "x": 21,
+        "y": 88,
+        "w": 37,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1162,18 +1162,18 @@
     },
     "pant1_8_7.png": {
       "frame": {
-        "x": 133,
-        "y": 110,
-        "w": 33,
-        "h": 24
+        "x": 409,
+        "y": 122,
+        "w": 37,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 22,
-        "y": 90,
-        "w": 33,
-        "h": 24
+        "x": 21,
+        "y": 88,
+        "w": 37,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1182,18 +1182,18 @@
     },
     "pant1_9_0.png": {
       "frame": {
-        "x": 1,
-        "y": 110,
-        "w": 33,
-        "h": 24
+        "x": 447,
+        "y": 122,
+        "w": 37,
+        "h": 27
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 23,
-        "y": 90,
-        "w": 33,
-        "h": 24
+        "x": 20,
+        "y": 89,
+        "w": 37,
+        "h": 27
       },
       "sourceSize": {
         "w": 80,
@@ -1202,18 +1202,18 @@
     },
     "pant1_4_6.png": {
       "frame": {
-        "x": 201,
-        "y": 110,
-        "w": 36,
-        "h": 21
+        "x": 1,
+        "y": 151,
+        "w": 40,
+        "h": 24
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 19,
-        "y": 86,
-        "w": 36,
-        "h": 21
+        "x": 18,
+        "y": 87,
+        "w": 40,
+        "h": 24
       },
       "sourceSize": {
         "w": 80,
@@ -1222,18 +1222,18 @@
     },
     "pant1_8_6.png": {
       "frame": {
-        "x": 238,
-        "y": 110,
-        "w": 36,
-        "h": 21
+        "x": 42,
+        "y": 151,
+        "w": 40,
+        "h": 24
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 22,
-        "y": 90,
-        "w": 36,
-        "h": 21
+        "x": 21,
+        "y": 88,
+        "w": 40,
+        "h": 24
       },
       "sourceSize": {
         "w": 80,
@@ -1247,7 +1247,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 512,
-      "h": 135
+      "h": 176
     },
     "scale": "1"
   }

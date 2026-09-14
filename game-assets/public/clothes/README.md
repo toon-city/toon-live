@@ -217,6 +217,22 @@ worth knowing about for the next one:
   always be checked per-direction against the live render, not assumed
   from one direction's fit.
 
+A follow-up pass added a **live offset editor to the throwaway avatar demo**
+(`/tmp/.../scratchpad/avatar_demo/`, not part of any repo — see that
+session's context) so the per-direction nudges above and the ones after it
+could be dialed in by eye and handed back as a `{direction: {dx, dy}}` JSON
+blob instead of guessed at from screenshots. That JSON gets applied as a
+final offset on top of `spriteSourceSize.x/y`, per direction, same as the
+"shared anchor doesn't fit every mirror target" bullet above — nothing
+architectural, just a faster feedback loop for the same kind of fix. The
+asset was also scaled up **12%** in that pass (`4/6` too far right by 1px,
+`5/9` -1/-1, `8` +1/-2, `10` down 1px, plus the garment itself judged "a
+little too small") — the resize is anchored at each frame's *top-center*
+(waistband stays where the earlier overlap-tuning pass put it, the garment
+grows down/out symmetrically from there) and repacked into a fresh atlas
+(`pant1.png` is regenerated, not just `pant1.json` — the pixel content
+itself changed size, unlike every fix before this one).
+
 The build script is `/tmp/.../scratchpad/pant_work/build_pant8.py` from the
 session that produced it, not checked into this repo (one-off per source
 art dump, not a general tool — that's what clothing-studio is for going
