@@ -55,7 +55,7 @@ matching folder here and a z-order slot in `partsConfig.ts`:
 | `hat`    | `hat/`      | hat, over hair                       |
 | `face`   | `face/`     | glasses/mask, over hair, under hat   |
 | `tshirt` | `tshirt/`   | torso layer (+ optional sleeves, see below) |
-| `pant`   | `pant/`     | legs, under the torso layer          |
+| `pant`   | `pant/`     | legs, drawn over the torso layer     |
 
 Adding a new category needs a small `Clothe` subclass (see `Hat.ts`/`Face.ts`
 — ~10 lines) plus a `ClotheRegistry.register()` call and a `PARTS_CONFIG`
@@ -67,9 +67,9 @@ Most sleeved items cover the arm on every direction except front/back
 (`1`/`2`) — the bare torso texture handles those, the arm shows through
 unclothed. A sleeve is a **separate animated overlay**, not part of the
 item's own static frame: it has to sit at the exact z-order of the body arm
-it covers (the right sleeve behind the torso like the back arm, the left one
-in front like the front arm) and animate in lockstep with it — see
-`ClotheSleeve.ts` in game-core.
+it covers (whatever `partsConfig.ts` currently gives that arm — both arms
+render in front of the shirt as of this writing) and animate in lockstep
+with it — see `ClotheSleeve.ts` in game-avatar.
 
 Frame naming: `{id}_al_{direction}_{n}.png` (left arm) and
 `{id}_ar_{direction}_{n}.png` (right arm), `n` starting at `0`. Same 80×120
@@ -121,11 +121,11 @@ file.
 **Unlike arm sleeves, the frame count does NOT need to match the body's own
 walk-cycle length** (`lg_wlk_{direction}` in `toon.json`). A sleeve has to
 stay frame-locked to the arm it partially reveals, or the body's bare arm
-shows through misaligned. A pant sits at z-order `1.5` in `partsConfig.ts`
-— between the legs (`1`) and the torso (`2`) — fully covering the legs
-underneath, so nothing of the body is ever visible through it. Its frame
-count and timing (`AnimatedClothe`'s `baseAnimationSpeed`) are entirely its
-own; there's nothing to sync.
+shows through misaligned. A pant sits at z-order `2.5` in `partsConfig.ts`
+— above the legs (`1`) AND the torso (`2`), below the shirt (`3`) — so it's
+drawn on top of the body, fully covering the legs and the bottom of the
+torso underneath. Its frame count and timing (`AnimatedClothe`'s
+`baseAnimationSpeed`) are entirely its own; there's nothing to sync.
 
 **A direction with only `_0.png` is a static item for that facing** —
 playing an `AnimatedSprite` with one texture does nothing visible, so this
@@ -182,8 +182,12 @@ worth knowing about for the next one:
   tuck the waistband under the shirt hem, large enough that the garment
   hangs down over the leg region where it's supposed to be. **Any
   future composite check for an overlay part MUST use the real z-order
-  from `partsConfig.ts`, torso-on-top included — checking with the wrong
-  draw order can hide exactly this kind of bug.**
+  from `partsConfig.ts`. Checking with the wrong draw order can hide
+  exactly this kind of bug** — as happened here, and note that
+  `partsConfig.ts`'s pant order has since moved to `2.5` (above the torso,
+  not below it — see the "Unlike arm sleeves" paragraph above), so the
+  y-coordinate math above is historical context for how the offset was
+  found, not a description of what's currently visible on screen.
 
 The build script is `/tmp/.../scratchpad/pant_work/build_pant8.py` from the
 session that produced it, not checked into this repo (one-off per source
