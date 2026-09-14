@@ -225,7 +225,7 @@ blob instead of guessed at from screenshots. That JSON gets applied as a
 final offset on top of `spriteSourceSize.x/y`, per direction, same as the
 "shared anchor doesn't fit every mirror target" bullet above — nothing
 architectural, just a faster feedback loop for the same kind of fix. The
-asset was also scaled up **12%** in that pass (`4/6` too far right by 1px,
+asset was also scaled up **6%** (revised down from an initial 12%, which was too much) in that pass (`4/6` too far right by 1px,
 `5/9` -1/-1, `8` +1/-2, `10` down 1px, plus the garment itself judged "a
 little too small") — the resize is anchored at each frame's *top-center*
 (waistband stays where the earlier overlap-tuning pass put it, the garment
