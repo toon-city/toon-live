@@ -124,8 +124,20 @@ stay frame-locked to the arm it partially reveals, or the body's bare arm
 shows through misaligned. A pant sits at z-order `2.5` in `partsConfig.ts`
 — above the legs (`1`) AND the torso (`2`), below the shirt (`3`) — so it's
 drawn on top of the body, fully covering the legs and the bottom of the
-torso underneath. Its frame count and timing (`AnimatedClothe`'s
-`baseAnimationSpeed`) are entirely its own; there's nothing to sync.
+torso underneath. Its frame *content* is entirely its own — no per-frame
+matching needed.
+
+Its cycle *timing* still benefits from staying loosely in step, though: a
+flat `animationSpeed` with an unrelated frame count per direction gives the
+garment's swing and the leg's own gait different cycle periods, which drift
+in and out of phase continuously — visible on its own even with the leg
+fully hidden. `AnimatedClothe`'s optional `syncAnimations` constructor param
+(same `Texture[][]` shape as `BaseTextureLoader.HUMAN_LEGS_ANIMATIONS`)
+fixes this by scaling `animationSpeed` per direction so the item's cycle
+takes exactly as many ticks as the reference's for that direction — `Pant`
+passes the leg animations as its sync target. Still no frame-for-frame
+matching, just matched cycle length, so this doesn't reintroduce the
+per-frame authoring burden a sleeve has.
 
 **A direction with only `_0.png` is a static item for that facing** —
 playing an `AnimatedSprite` with one texture does nothing visible, so this
