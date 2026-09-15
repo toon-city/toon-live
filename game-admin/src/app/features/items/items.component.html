@@ -72,15 +72,24 @@
     </div>
     <div class="field mt-3">
       <label>Image d'affichage *</label>
-      <input pInputText formControlName="displayImage" placeholder="ex: clothes/tshirt/example.png" class="w-full mt-1" />
+      <!-- Rendu tel quel par <img [src]>, sans base prefixée (contrairement à
+           spritePath/spriteKey ci-dessous, résolus via AssetBaseUrl côté
+           avatar/meuble) — il faut une URL complète, ex. celle de
+           game-assets en dev (http://localhost:3001/...). -->
+      <input pInputText formControlName="displayImage" placeholder="ex: http://localhost:3001/clothes/tshirt/example.png" class="w-full mt-1" />
     </div>
     <div class="field mt-3">
-      <label>Chemin spritesheet</label>
-      <input pInputText formControlName="spritePath" placeholder="ex: clothes/tshirt/example.json" class="w-full mt-1" />
+      <label>Clé sprite (catégorie)</label>
+      <!-- = le dossier sous clothes/ ou furnitures/ : hair, hat, tshirt,
+           pant, jardin... -->
+      <input pInputText formControlName="spriteKey" placeholder="ex: tshirt" class="w-full mt-1" />
     </div>
     <div class="field mt-3">
-      <label>Clé sprite</label>
-      <input pInputText formControlName="spriteKey" placeholder="ex: tshirt_example" class="w-full mt-1" />
+      <label>Chemin spritesheet (id, sans dossier ni extension)</label>
+      <!-- Résolu par le runtime en clothes/{spriteKey}/{spritePath}.json
+           (Clothe.ts) ou furnitures/{spriteKey}/{spritePath}.json — jamais
+           un chemin complet, malgré ce que suggérait l'ancien placeholder. -->
+      <input pInputText formControlName="spritePath" placeholder="ex: tshirt_example" class="w-full mt-1" />
     </div>
     <div class="field mt-3 flex align-items-center gap-2">
       <p-inputSwitch formControlName="possessable" inputId="possessable" />
