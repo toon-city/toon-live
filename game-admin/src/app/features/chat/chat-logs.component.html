@@ -4,7 +4,13 @@
 <div class="page-header">
   <h2>Logs de chat</h2>
   <div class="filters">
-    <input pInputText placeholder="Room ID" [(ngModel)]="filterRoomId" (ngModelChange)="load(0)" style="width:120px" />
+    <app-entity-autocomplete
+      [(ngModel)]="filterRoomId"
+      (ngModelChange)="load(0)"
+      [searchFn]="searchRooms"
+      placeholder="Maison…"
+      style="width:200px"
+    />
     <input pInputText placeholder="Pseudo / nom" [(ngModel)]="filterUsername" (ngModelChange)="load(0)" style="width:160px" />
   </div>
 </div>

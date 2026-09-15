@@ -78,8 +78,14 @@
 <p-dialog [(visible)]="itemDialog" [header]="editShopItem ? 'Modifier l\'article' : 'Ajouter un article'" [modal]="true" [style]="{width:'420px'}">
   <form [formGroup]="itemForm" class="dialog-form">
     <div class="field">
-      <label>ID Article *</label>
-      <input pInputText type="number" formControlName="itemId" class="w-full mt-1" [readonly]="!!editShopItem" />
+      <label>Article *</label>
+      <app-entity-autocomplete
+        formControlName="itemId"
+        [searchFn]="searchItems"
+        [resolveFn]="resolveItem"
+        placeholder="Chercher un article par nom…"
+        class="block mt-1"
+      />
     </div>
     <div class="field mt-3">
       <label>Prix en Pez</label>

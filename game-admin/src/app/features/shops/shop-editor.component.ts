@@ -12,13 +12,16 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { map } from 'rxjs';
 import { AdminShopsService } from '../../core/services/admin-shops.service';
+import { AdminItemsService } from '../../core/services/admin-items.service';
 import { ShopItem, CollectionInfo } from '../../core/models/models';
+import { EntityAutocompleteComponent, EntityOption } from '../../shared/components/entity-autocomplete/entity-autocomplete.component';
 
 @Component({
   selector: 'app-shop-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TabViewModule, TableModule, ButtonModule, InputTextModule, TagModule, DialogModule, ToastModule, ConfirmDialogModule, InputSwitchModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TabViewModule, TableModule, ButtonModule, InputTextModule, TagModule, DialogModule, ToastModule, ConfirmDialogModule, InputSwitchModule, EntityAutocompleteComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './shop-editor.component.html',
   styleUrls: ['./shop-editor.component.scss']
@@ -26,9 +29,16 @@ import { ShopItem, CollectionInfo } from '../../core/models/models';
 export class ShopEditorComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly shopsService = inject(AdminShopsService);
+  private readonly itemsService = inject(AdminItemsService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
   private readonly fb = inject(FormBuilder);
+
+  readonly searchItems = (term: string) =>
+    this.itemsService.list(term).pipe(map(page => page.content.map(i => ({ id: i.id, label: i.name } as EntityOption))));
+
+  readonly resolveItem = (id: number | string) =>
+    this.itemsService.get(id as number).pipe(map(i => ({ id: i.id, label: i.name } as EntityOption)));
 
   shopId = signal('');
   items = signal<ShopItem[]>([]);
@@ -75,12 +85,16 @@ export class ShopEditorComponent implements OnInit {
   openCreateItem() {
     this.editShopItem = null;
     this.itemForm.reset({ pezPrice: null, kredPrice: null, kredBonus: 0, stock: null });
+    this.itemForm.controls.itemId.enable();
     this.itemDialog = true;
   }
 
   openEditItem(item: ShopItem) {
     this.editShopItem = item;
     this.itemForm.patchValue({ itemId: item.item.id, pezPrice: item.pezPrice, kredPrice: item.kredPrice, kredBonus: item.kredBonus, stock: item.stock });
+    // Which catalogue item a shop row points to doesn't change after
+    // creation — same as the old readonly numeric input.
+    this.itemForm.controls.itemId.disable();
     this.itemDialog = true;
   }
 
