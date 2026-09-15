@@ -34,8 +34,11 @@ export class LoginComponent {
     this.loading = true;
     this.error = '';
     const { username, password } = this.form.getRawValue();
+    // AuthService.login() already navigates by rank (mod -> /users,
+    // admin -> /dashboard) — a second unconditional navigate(['/dashboard'])
+    // here used to fight it for every non-admin login, masked only by
+    // adminGuard bouncing back to /users right after.
     this.auth.login({ username, password }).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
       error: () => {
         this.error = 'Identifiants invalides ou accès refusé.';
         this.loading = false;

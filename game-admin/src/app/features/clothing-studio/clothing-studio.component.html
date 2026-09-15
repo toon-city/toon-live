@@ -15,8 +15,8 @@
         [options]="categories"
         optionLabel="label"
         optionValue="value"
-        [(ngModel)]="category"
-        (ngModelChange)="onCategoryChange()"
+        [ngModel]="category()"
+        (ngModelChange)="category.set($event); onCategoryChange()"
       ></p-dropdown>
     </div>
     <div class="field">
@@ -25,8 +25,8 @@
         id="itemId"
         pInputText
         placeholder="ex: tshirt_may1"
-        [(ngModel)]="itemId"
-        (ngModelChange)="onItemIdChange()"
+        [ngModel]="itemId()"
+        (ngModelChange)="itemId.set($event); onItemIdChange()"
       />
     </div>
   </section>

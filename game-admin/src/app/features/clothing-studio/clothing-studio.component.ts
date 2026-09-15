@@ -114,8 +114,17 @@ export class ClothingStudioComponent {
 
   private previewDebounceHandle: ReturnType<typeof setTimeout> | null = null;
 
+  // The (category, id) pair the cached draft — if any — is actually filed
+  // under. Must be captured *before* the signal is updated to the new
+  // value, or clearDraftFromPreview() ends up clearing an entry that was
+  // never populated (the new pair) while the real stale one leaks for the
+  // rest of the session — see clearDraftFromPreview()'s doc comment.
+  private lastCategory = this.category();
+  private lastItemId = this.itemId();
+
   onCategoryChange(): void {
-    this.clearDraftFromPreview();
+    this.clearDraftFromPreview(this.lastCategory, this.lastItemId);
+    this.lastCategory = this.category();
     this.placements.set({});
     this.activeFrameIndex.set(0);
     this.publishResult.set(null);
@@ -123,7 +132,8 @@ export class ClothingStudioComponent {
   }
 
   onItemIdChange(): void {
-    this.clearDraftFromPreview();
+    this.clearDraftFromPreview(this.lastCategory, this.lastItemId);
+    this.lastItemId = this.itemId();
     this.publishResult.set(null);
     this.schedulePreviewRefresh();
   }
@@ -210,9 +220,10 @@ export class ClothingStudioComponent {
     this.previewAvatar?.equip(category, id);
   }
 
-  private clearDraftFromPreview(): void {
-    const id = this.itemId().trim();
-    if (id) this.previewCache.clearDraft(this.category(), id);
+  /** Avoids a stale draft under an id that later collides with a real published item — must be called with the (category, id) pair the draft was actually cached under, not whatever the fields hold *now*. */
+  private clearDraftFromPreview(category: string, id: string): void {
+    const trimmed = id.trim();
+    if (trimmed) this.previewCache.clearDraft(category, trimmed);
   }
 
   cycleDirectionPreview(direction: Direction): void {

@@ -34,6 +34,8 @@
       </div>
       @if (chartData) {
         <p-chart type="line" [data]="chartData" [options]="chartOptions" height="250px" />
+      } @else if (seriesError()) {
+        <p class="chart-error">{{ seriesError() }}</p>
       }
     </p-card>
   </div>

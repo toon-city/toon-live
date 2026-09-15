@@ -11,7 +11,15 @@
     <div class="tab-toolbar">
       <p-button label="Ajouter un article" icon="pi pi-plus" (onClick)="openCreateItem()" />
     </div>
-    <p-table [value]="items()" styleClass="p-datatable-sm p-datatable-gridlines mt-2">
+    <p-table
+      [value]="items()"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="30"
+      [totalRecords]="itemsTotal()"
+      (onPage)="onItemsPage($event)"
+      styleClass="p-datatable-sm p-datatable-gridlines mt-2"
+    >
       <ng-template pTemplate="header">
         <tr>
           <th>Article</th>

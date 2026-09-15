@@ -42,6 +42,7 @@ export class ShopEditorComponent implements OnInit {
 
   shopId = signal('');
   items = signal<ShopItem[]>([]);
+  itemsTotal = signal(0);
   collections = signal<CollectionInfo[]>([]);
 
   // --- Shop item dialog ---
@@ -71,10 +72,18 @@ export class ShopEditorComponent implements OnInit {
     this.loadCollections();
   }
 
-  loadItems() {
-    this.shopsService.listItems(this.shopId()).subscribe((page: any) => {
-      this.items.set(Array.isArray(page) ? page : (page.content ?? []));
+  loadItems(page = 0) {
+    this.shopsService.listItems(this.shopId(), page).subscribe((res: any) => {
+      // 30 items/page server-side (AdminShopService.PAGE_SIZE) — used to be
+      // fetched with no page param and no paginator UI at all, so any shop
+      // past its first 30 items silently hid the rest with no indication.
+      this.items.set(Array.isArray(res) ? res : (res.content ?? []));
+      this.itemsTotal.set(Array.isArray(res) ? res.length : (res.totalElements ?? 0));
     });
+  }
+
+  onItemsPage(evt: any) {
+    this.loadItems(evt.first / evt.rows);
   }
 
   loadCollections() {

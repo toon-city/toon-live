@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
   topUsers = signal<TopUser[]>([]);
   chartData: any = null;
   chartOptions: any = null;
+  seriesError = signal<string | null>(null);
 
   granularities = [
     { label: 'Heure', value: 'hour' },
@@ -32,10 +33,13 @@ export class DashboardComponent implements OnInit {
   selectedGranularity = 'day';
   selectedMetric = 'purchases';
 
+  // Values must match AdminStatsService.getTimeSeries's metric.toUpperCase()
+  // switch exactly (case-insensitive, but not the spelling) — REGISTRATIONS/
+  // CONNECTIONS/PURCHASES/KREDS/DEDITOONS, nothing else, everything else 400s.
   metrics = [
     { label: 'Achats', value: 'purchases' },
-    { label: 'Kreds dépensés', value: 'kreds_spent' },
-    { label: 'Connexions (DAU)', value: 'dau' }
+    { label: 'Kreds dépensés', value: 'kreds' },
+    { label: 'Connexions', value: 'connections' }
   ];
 
   ngOnInit() {
@@ -52,8 +56,14 @@ export class DashboardComponent implements OnInit {
   loadSeries() {
     const to = new Date();
     const from = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    this.seriesError.set(null);
     this.stats.timeSeries(this.selectedMetric, from.toISOString(), to.toISOString(), this.selectedGranularity)
-      .subscribe((ts: TimeSeries) => this.buildChart(ts));
+      .subscribe({
+        next: (ts: TimeSeries) => this.buildChart(ts),
+        // Was silently swallowed before — the chart just kept showing the
+        // previous metric's stale data with no indication anything failed.
+        error: () => { this.chartData = null; this.seriesError.set('Impossible de charger cette métrique.'); },
+      });
   }
 
   buildChart(ts: TimeSeries) {
