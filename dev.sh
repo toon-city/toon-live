@@ -21,6 +21,13 @@ if tmux has-session -t "$SESSION" 2>/dev/null; then
   exit 0
 fi
 
+# Bloque tant que le conteneur postgres n'est pas healthy (le healthcheck
+# pg_isready existe déjà dans docker-compose.dev.yml mais n'était jamais
+# consulté ici — les fenêtres api/server se contentaient d'un `sleep` fixe
+# avant de tenter la connexion DB, ce qui plantait au premier démarrage
+# (pull d'image, init du volume) ou sur une machine lente.
+WAIT_DB="until [ \"\$(docker inspect -f '{{.State.Health.Status}}' toonlive-dev-postgres 2>/dev/null)\" = healthy ]; do echo '… attente de postgres'; sleep 1; done"
+
 # ── Fenêtre 0 : Base de données ────────────────────────────────────────────────
 tmux new-session -d -s "$SESSION" -n "db" -x 220 -y 50
 tmux send-keys -t "$SESSION:db" \
@@ -29,20 +36,20 @@ tmux send-keys -t "$SESSION:db" \
 # ── Fenêtre 1 : API (bootRun + watch en split) ─────────────────────────────────
 tmux new-window -t "$SESSION" -n "api"
 tmux split-window -v -t "$SESSION:api" -p 30
-# Pane supérieur : bootRun
+# Pane supérieur : bootRun (attend postgres healthy, pas un sleep fixe)
 tmux send-keys -t "$SESSION:api.0" \
-  "sleep 3 && cd '$ROOT' && $JAVA_ENV ./game-api/gradlew -p game-api bootRun" C-m
-# Pane inférieur : recompilation continue (déclenche DevTools)
+  "$WAIT_DB && cd '$ROOT' && $JAVA_ENV ./game-api/gradlew -p game-api bootRun" C-m
+# Pane inférieur : recompilation continue (déclenche DevTools) — pas besoin de la DB
 tmux send-keys -t "$SESSION:api.1" \
-  "sleep 5 && cd '$ROOT/game-api' && ./gradlew classes -t" C-m
+  "sleep 2 && cd '$ROOT/game-api' && ./gradlew classes -t" C-m
 
 # ── Fenêtre 2 : Game-server (bootRun + watch en split) ─────────────────────────
 tmux new-window -t "$SESSION" -n "server"
 tmux split-window -v -t "$SESSION:server" -p 30
 tmux send-keys -t "$SESSION:server.0" \
-  "sleep 3 && cd '$ROOT' && $JAVA_ENV ./game-server-java/gradlew -p game-server-java bootRun" C-m
+  "$WAIT_DB && cd '$ROOT' && $JAVA_ENV ./game-server-java/gradlew -p game-server-java bootRun" C-m
 tmux send-keys -t "$SESSION:server.1" \
-  "sleep 5 && cd '$ROOT/game-server-java' && ./gradlew classes -t" C-m
+  "sleep 2 && cd '$ROOT/game-server-java' && ./gradlew classes -t" C-m
 
 # ── Fenêtre 3 : Frontend Angular ───────────────────────────────────────────────
 tmux new-window -t "$SESSION" -n "web"
