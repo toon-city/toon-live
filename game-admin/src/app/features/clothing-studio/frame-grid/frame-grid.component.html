@@ -1,0 +1,46 @@
+<input #fileInput type="file" accept="image/png,image/webp" (change)="onFileSelected($event)" hidden />
+
+<div class="grid">
+  @for (d of directions; track d) {
+    <div class="row">
+      <span class="row-label">{{ directionLabels[d] }}</span>
+
+      <div class="cells">
+        @for (frame of framesFor(d); track $index) {
+          <button
+            type="button"
+            class="cell"
+            [class.active]="isActive(d, $index)"
+            [style.width.px]="thumbW"
+            [style.height.px]="thumbH"
+            (click)="selectFrame(d, $index)"
+            [title]="'Frame ' + $index"
+          >
+            <span class="frame-index">{{ $index }}</span>
+            <img class="thumb-img" [src]="frame.image.src" [ngStyle]="thumbStyle(frame)" />
+          </button>
+        }
+
+        @if (framesFor(d).length === 0) {
+          <button
+            type="button"
+            class="cell empty"
+            [style.width.px]="thumbW"
+            [style.height.px]="thumbH"
+            (click)="promptAdd(d)"
+            title="Ajouter une image"
+          >+</button>
+        } @else if (showAddChip(d)) {
+          <button
+            type="button"
+            class="cell add"
+            [style.width.px]="thumbW"
+            [style.height.px]="thumbH"
+            (click)="promptAdd(d)"
+            title="Ajouter une frame"
+          >+</button>
+        }
+      </div>
+    </div>
+  }
+</div>

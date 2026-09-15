@@ -33,25 +33,30 @@
 
   <section class="workspace">
     <div class="directions-panel">
-      <div class="direction-chips">
-        @for (d of directions; track d) {
-          <button
-            type="button"
-            class="chip"
-            [class.active]="activeDirection() === d"
-            [class.filled]="placements()[d]"
-            (click)="selectDirection(d)"
-          >
-            {{ directionLabels[d] }}
-          </button>
-        }
-      </div>
+      <app-frame-grid
+        [directions]="directions"
+        [directionLabels]="directionLabels"
+        [placements]="placements()"
+        [hasFrameAnimation]="categoryHasFrameAnimation()"
+        [activeDirection]="activeDirection()"
+        [activeFrameIndex]="activeFrameIndex()"
+        (select)="selectCell($event)"
+        (addFrame)="onAddFrame($event)"
+      ></app-frame-grid>
+
+      @if (categoryHasFrameAnimation()) {
+        <p class="hint">
+          Une seule frame = image statique pour cette direction (ex : une
+          jupe sans animation). Plusieurs frames = cycle de marche, dans
+          l'ordre.
+        </p>
+      }
 
       <app-direction-editor
         [direction]="activeDirection()"
-        [frames]="placements()[activeDirection()] ?? []"
-        [hasFrameAnimation]="categoryHasFrameAnimation()"
-        (framesChange)="onFramesChange(activeDirection(), $event)"
+        [frame]="activeFrame()"
+        (frameChange)="onActiveFrameChange($event)"
+        (remove)="onRemoveActiveFrame()"
       ></app-direction-editor>
 
       <p class="progress">{{ placedDirectionsCount() }} / {{ directions.length }} directions placées</p>

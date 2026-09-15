@@ -47,13 +47,6 @@
   font-size: 0.85rem;
 }
 
-.upload-btn {
-  cursor: pointer;
-  padding: 0.4rem 0.8rem;
-  border: 1px dashed var(--surface-border, #666);
-  border-radius: 4px;
-}
-
 .scale-control {
   display: flex;
   align-items: center;
@@ -70,35 +63,6 @@
   color: var(--red-400, #f87171);
   background: none;
   border: none;
-}
-
-.frame-strip {
-  display: flex;
-  gap: 0.35rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.frame-chip {
-  cursor: pointer;
-  width: 1.8rem;
-  height: 1.8rem;
-  font-size: 0.8rem;
-  border: 1px solid var(--surface-border, #666);
-  border-radius: 4px;
-  background: none;
-  color: inherit;
-
-  &.active {
-    border-color: var(--primary-color, #60a5fa);
-    background: var(--primary-color, #60a5fa);
-    color: #fff;
-  }
-
-  &.add {
-    border-style: dashed;
-    font-weight: 700;
-  }
 }
 
 .hint {

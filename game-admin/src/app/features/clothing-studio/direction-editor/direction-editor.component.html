@@ -21,10 +21,10 @@
     ></app-avatar-preview>
 
     <!-- Admin's raw image, positioned/scaled against the reference -->
-    @if (activeFrame) {
+    @if (frame) {
       <img
         class="draft-layer"
-        [src]="activeFrame.image.src"
+        [src]="frame.image.src"
         [ngStyle]="imageStyle()"
         (pointerdown)="onPointerDown($event)"
         draggable="false"
@@ -32,32 +32,8 @@
     }
   </div>
 
-  <input #fileInput type="file" accept="image/png,image/webp" (change)="onFileSelected($event)" hidden />
-
-  @if (hasFrameAnimation) {
-    <div class="frame-strip">
-      @for (f of frames; track $index) {
-        <button
-          type="button"
-          class="frame-chip"
-          [class.active]="$index === selectedFrameIndex"
-          (click)="selectFrame($index)"
-        >
-          {{ $index }}
-        </button>
-      }
-      <button type="button" class="frame-chip add" (click)="addFrame()" title="Ajouter une frame">+</button>
-    </div>
-    <p class="hint">
-      Une seule frame = image statique pour cette direction (ex : une jupe
-      sans animation). Plusieurs frames = cycle de marche, dans l'ordre.
-    </p>
-  }
-
-  <div class="controls">
-    @if (!activeFrame) {
-      <button type="button" class="upload-btn" (click)="fileInput.click()">Choisir une image</button>
-    } @else {
+  @if (frame) {
+    <div class="controls">
       <label class="scale-control">
         Échelle
         <input
@@ -65,13 +41,15 @@
           min="0.1"
           max="4"
           step="0.01"
-          [value]="activeFrame.scale"
+          [value]="frame.scale"
           (input)="onScaleSlider($any($event.target).valueAsNumber)"
         />
-        <span>{{ activeFrame.scale | number: '1.2-2' }}×</span>
+        <span>{{ frame.scale | number: '1.2-2' }}×</span>
       </label>
-      <span class="readout">x: {{ activeFrame.x | number: '1.0-1' }} · y: {{ activeFrame.y | number: '1.0-1' }}</span>
-      <button type="button" class="remove-btn" (click)="removeImage()">Retirer</button>
-    }
-  </div>
+      <span class="readout">x: {{ frame.x | number: '1.0-1' }} · y: {{ frame.y | number: '1.0-1' }}</span>
+      <button type="button" class="remove-btn" (click)="remove.emit()">Retirer</button>
+    </div>
+  } @else {
+    <p class="hint">Choisis une case dans la grille ci-dessus pour ajouter une image à cette direction.</p>
+  }
 </div>

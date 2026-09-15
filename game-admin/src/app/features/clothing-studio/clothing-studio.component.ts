@@ -7,13 +7,17 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MessageModule } from 'primeng/message';
 import { DirectionEditorComponent } from './direction-editor/direction-editor.component';
 import { AvatarPreviewComponent } from './avatar-preview/avatar-preview.component';
+import { FrameGridComponent, GridCellSelection } from './frame-grid/frame-grid.component';
 import { ClothingAssetBuilderService } from './services/clothing-asset-builder.service';
 import { ClothingPreviewCacheService } from './services/clothing-preview-cache.service';
 import { ClothingPublishService } from './services/clothing-publish.service';
 import {
   VALID_DIRECTIONS,
   DIRECTION_LABELS,
+  AVATAR_CANVAS_W,
+  AVATAR_CANVAS_H,
   Direction,
+  DirectionPlacement,
   PlacementsByDirection,
   BuiltClotheAsset,
 } from './clothing-draft.model';
@@ -63,6 +67,7 @@ const PREVIEW_DEBOUNCE_MS = 150;
     MessageModule,
     DirectionEditorComponent,
     AvatarPreviewComponent,
+    FrameGridComponent,
   ],
   templateUrl: './clothing-studio.component.html',
   styleUrls: ['./clothing-studio.component.scss'],
@@ -82,8 +87,14 @@ export class ClothingStudioComponent {
   itemId = signal<string>('');
   placements = signal<PlacementsByDirection>({});
   activeDirection = signal<Direction>(1);
+  activeFrameIndex = signal(0);
   previewDirection = signal<Direction>(1);
   previewWalking = signal(false);
+
+  readonly activeFrame = computed<DirectionPlacement | null>(() => {
+    const frames = this.placements()[this.activeDirection()];
+    return frames?.[this.activeFrameIndex()] ?? null;
+  });
 
   publishing = signal(false);
   publishResult = signal<{ ok: boolean; message: string } | null>(null);
@@ -106,6 +117,7 @@ export class ClothingStudioComponent {
   onCategoryChange(): void {
     this.clearDraftFromPreview();
     this.placements.set({});
+    this.activeFrameIndex.set(0);
     this.publishResult.set(null);
     this.schedulePreviewRefresh();
   }
@@ -116,19 +128,53 @@ export class ClothingStudioComponent {
     this.schedulePreviewRefresh();
   }
 
-  /** `frames` empty or undefined removes this direction entirely (same as the old single-placement "null" case). */
-  onFramesChange(direction: Direction, frames: PlacementsByDirection[Direction]): void {
+  selectCell({ direction, frameIndex }: GridCellSelection): void {
+    this.activeDirection.set(direction);
+    this.activeFrameIndex.set(frameIndex);
+  }
+
+  /** Grid's "+" (or a static category's one empty slot) — append a new centered frame and load it straight into the stage editor. */
+  onAddFrame({ direction, file }: { direction: Direction; file: File }): void {
+    const img = new Image();
+    img.onload = () => {
+      // Center a freshly-dropped image on the canvas by default — nudging
+      // from there is faster than hunting for a starting position.
+      const x = Math.round((AVATAR_CANVAS_W - img.naturalWidth) / 2);
+      const y = Math.round((AVATAR_CANVAS_H - img.naturalHeight) / 2);
+      const placement: DirectionPlacement = { image: img, x, y, scale: 1 };
+
+      const frames = [...(this.placements()[direction] ?? []), placement];
+      this.setFrames(direction, frames);
+      this.activeDirection.set(direction);
+      this.activeFrameIndex.set(frames.length - 1);
+    };
+    img.src = URL.createObjectURL(file);
+  }
+
+  /** The stage editor's drag/scale/wheel edits on whichever frame is currently active. */
+  onActiveFrameChange(patch: DirectionPlacement): void {
+    const direction = this.activeDirection();
+    const frames = [...(this.placements()[direction] ?? [])];
+    frames[this.activeFrameIndex()] = patch;
+    this.setFrames(direction, frames);
+  }
+
+  onRemoveActiveFrame(): void {
+    const direction = this.activeDirection();
+    const frames = (this.placements()[direction] ?? []).filter((_, i) => i !== this.activeFrameIndex());
+    this.setFrames(direction, frames);
+    this.activeFrameIndex.set(Math.min(this.activeFrameIndex(), Math.max(0, frames.length - 1)));
+  }
+
+  /** Empty array removes the direction entirely (same as the old single-placement "null" case). */
+  private setFrames(direction: Direction, frames: DirectionPlacement[]): void {
     this.placements.update(current => {
       const next = { ...current };
-      if (frames && frames.length > 0) next[direction] = frames;
+      if (frames.length > 0) next[direction] = frames;
       else delete next[direction];
       return next;
     });
     this.schedulePreviewRefresh();
-  }
-
-  selectDirection(direction: Direction): void {
-    this.activeDirection.set(direction);
   }
 
   private namePattern(): (direction: Direction, frameIndex: number) => string {
