@@ -1,5 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TabViewModule } from 'primeng/tabview';
@@ -26,7 +27,7 @@ import { EntityAutocompleteComponent, EntityOption } from '../../shared/componen
   templateUrl: './shop-editor.component.html',
   styleUrls: ['./shop-editor.component.scss']
 })
-export class ShopEditorComponent implements OnInit {
+export class ShopEditorComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly shopsService = inject(AdminShopsService);
   private readonly itemsService = inject(AdminItemsService);
@@ -66,10 +67,23 @@ export class ShopEditorComponent implements OnInit {
     enabled:     [true]
   });
 
+  private paramSub?: Subscription;
+
   ngOnInit() {
-    this.shopId.set(this.route.snapshot.paramMap.get('shopId') ?? '');
-    this.loadItems();
-    this.loadCollections();
+    // route.snapshot is a one-time read — the router reuses this component
+    // instance across /shops/:shopId → /shops/:otherShopId (same route
+    // config, no navigation away from it), so ngOnInit never re-fires and
+    // shopId stayed stuck on whichever shop loaded first (e.g. clicking
+    // "vesti" while on "coupe_tif" silently kept editing coupe_tif).
+    this.paramSub = this.route.paramMap.subscribe(params => {
+      this.shopId.set(params.get('shopId') ?? '');
+      this.loadItems();
+      this.loadCollections();
+    });
+  }
+
+  ngOnDestroy() {
+    this.paramSub?.unsubscribe();
   }
 
   loadItems(page = 0) {

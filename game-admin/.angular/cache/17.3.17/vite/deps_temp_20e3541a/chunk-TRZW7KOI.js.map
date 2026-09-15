@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../node_modules/pixi.js/lib/rendering/renderers/gl/shader/getBatchSamplersUniformGroup.mjs"],
+  "sourcesContent": ["import { UniformGroup } from '../../shared/shader/UniformGroup.mjs';\n\n\"use strict\";\nconst batchSamplersUniformGroupHash = {};\nfunction getBatchSamplersUniformGroup(maxTextures) {\n  let batchSamplersUniformGroup = batchSamplersUniformGroupHash[maxTextures];\n  if (batchSamplersUniformGroup)\n    return batchSamplersUniformGroup;\n  const sampleValues = new Int32Array(maxTextures);\n  for (let i = 0; i < maxTextures; i++) {\n    sampleValues[i] = i;\n  }\n  batchSamplersUniformGroup = batchSamplersUniformGroupHash[maxTextures] = new UniformGroup({\n    uTextures: { value: sampleValues, type: `i32`, size: maxTextures }\n  }, { isStatic: true });\n  return batchSamplersUniformGroup;\n}\n\nexport { getBatchSamplersUniformGroup };\n\n"],
+  "mappings": ";;;;;AAGA,IAAM,gCAAgC,CAAC;AACvC,SAAS,6BAA6B,aAAa;AACjD,MAAI,4BAA4B,8BAA8B,WAAW;AACzE,MAAI;AACF,WAAO;AACT,QAAM,eAAe,IAAI,WAAW,WAAW;AAC/C,WAAS,IAAI,GAAG,IAAI,aAAa,KAAK;AACpC,iBAAa,CAAC,IAAI;AAAA,EACpB;AACA,8BAA4B,8BAA8B,WAAW,IAAI,IAAI,aAAa;AAAA,IACxF,WAAW,EAAE,OAAO,cAAc,MAAM,OAAO,MAAM,YAAY;AAAA,EACnE,GAAG,EAAE,UAAU,KAAK,CAAC;AACrB,SAAO;AACT;",
+  "names": []
+}

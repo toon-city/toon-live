@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../node_modules/pixi.js/lib/accessibility/init.mjs", "../../../../../node_modules/pixi.js/lib/events/init.mjs"],
+  "sourcesContent": ["import { extensions } from '../extensions/Extensions.mjs';\nimport { Container } from '../scene/container/Container.mjs';\nimport { AccessibilitySystem } from './AccessibilitySystem.mjs';\nimport { accessibilityTarget } from './accessibilityTarget.mjs';\n\n\"use strict\";\nextensions.add(AccessibilitySystem);\nContainer.mixin(accessibilityTarget);\n\n", "import { extensions } from '../extensions/Extensions.mjs';\nimport { Container } from '../scene/container/Container.mjs';\nimport { EventSystem } from './EventSystem.mjs';\nimport { FederatedContainer } from './FederatedEventTarget.mjs';\n\n\"use strict\";\nextensions.add(EventSystem);\nContainer.mixin(FederatedContainer);\n\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;AAMA,WAAW,IAAI,mBAAmB;AAClC,UAAU,MAAM,mBAAmB;;;ACDnC,WAAW,IAAI,WAAW;AAC1B,UAAU,MAAM,kBAAkB;",
+  "names": []
+}

@@ -1,22 +1,22 @@
 import {
   ChevronLeftIcon,
   ChevronRightIcon
-} from "./chunk-PPC2IXUO.js";
+} from "./chunk-RMFBN4CL.js";
 import {
   Tooltip,
   TooltipModule
-} from "./chunk-XMV3BL6J.js";
+} from "./chunk-RXH4THIJ.js";
 import {
   TimesIcon
-} from "./chunk-VSBLNALK.js";
+} from "./chunk-2UA673FT.js";
 import {
   Ripple,
   RippleModule
-} from "./chunk-HCJQYQET.js";
+} from "./chunk-7ULDQ3N3.js";
 import {
   DomHandler
 } from "./chunk-JZQAVOZS.js";
-import "./chunk-SYPI23KW.js";
+import "./chunk-PPSNSOBH.js";
 import {
   CommonModule,
   NgClass,
@@ -25,14 +25,14 @@ import {
   NgStyle,
   NgTemplateOutlet,
   isPlatformBrowser
-} from "./chunk-QCD7R6WY.js";
+} from "./chunk-3II4CH2V.js";
 import {
   PrimeTemplate,
   SharedModule
-} from "./chunk-A6SPAOAM.js";
+} from "./chunk-P25TAXX5.js";
 import {
   UniqueComponentId
-} from "./chunk-JKXDD67J.js";
+} from "./chunk-L6HMITPC.js";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -85,8 +85,11 @@ import {
   ɵɵtext,
   ɵɵtextInterpolate,
   ɵɵviewQuery
-} from "./chunk-MLEBUH3X.js";
-import "./chunk-OA3ZIIAD.js";
+} from "./chunk-KHB3FGJO.js";
+import "./chunk-4RMHXXWK.js";
+import "./chunk-LFVCTHGI.js";
+import "./chunk-AJN3JCM6.js";
+import "./chunk-TXDUYLVM.js";
 
 // node_modules/primeng/fesm2022/primeng-tabview.mjs
 var _c0 = ["*"];
