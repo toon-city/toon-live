@@ -40,9 +40,27 @@ export class ItemsComponent implements OnInit {
     { label: 'MISC',      value: 'MISC'       }
   ];
   allTypes = [{ label: 'Tous', value: '' }, ...this.itemTypes];
-  subTypes = [
-    'FLOOR','WALL','WALLPAPER','PIECE','HAIRSTYLE','HAT','TOP','BOTTOM','MAKEUP','OTHER'
-  ].map(s => ({ label: s, value: s }));
+
+  // Was one flat list shared across every itemType (bare ItemSubType enum
+  // values) — nothing kept, say, a FURNITURE item from being saved with
+  // subType HAT. Also missing RING entirely, so a ring could never be
+  // created at all. Grouped here to match the backend's real constraint
+  // (Item.subType has to make sense for its itemType) — RING lives under
+  // CLOTHING because that's what the app actually equips it as
+  // (InventoryService.equipItem requires itemType===CLOTHING; the backend
+  // enum's own comment groups RING separately as "Mariage" but that's
+  // organizational only, not a real ItemType value).
+  private readonly SUBTYPES_BY_TYPE: Record<string, string[]> = {
+    FURNITURE: ['FLOOR', 'WALL', 'WALLPAPER', 'PIECE'],
+    CLOTHING:  ['HAIRSTYLE', 'HAT', 'TOP', 'BOTTOM', 'MAKEUP', 'RING'],
+    MISC:      ['OTHER'],
+  };
+
+  subTypeOptions = signal(this.toOptions(this.SUBTYPES_BY_TYPE['CLOTHING']));
+
+  private toOptions(values: string[]) {
+    return values.map(s => ({ label: s, value: s }));
+  }
 
   createDialog = false;
   editItem: ItemInfo | null = null;
@@ -57,7 +75,20 @@ export class ItemsComponent implements OnInit {
     spriteKey:    ['']
   });
 
-  ngOnInit() { this.load(0); }
+  ngOnInit() {
+    this.load(0);
+    this.form.controls.itemType.valueChanges.subscribe(itemType => {
+      const values = this.SUBTYPES_BY_TYPE[itemType ?? 'CLOTHING'] ?? [];
+      this.subTypeOptions.set(this.toOptions(values));
+      // Current subType may no longer be valid for the new itemType (e.g.
+      // was TOP under CLOTHING, itemType switched to FURNITURE) — snap to
+      // the first valid option instead of silently keeping a mismatched
+      // value the backend would reject.
+      if (!values.includes(this.form.controls.subType.value ?? '')) {
+        this.form.controls.subType.setValue(values[0] ?? null);
+      }
+    });
+  }
 
   load(page: number) {
     this.loading.set(true);

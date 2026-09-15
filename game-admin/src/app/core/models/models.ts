@@ -61,6 +61,12 @@ export interface RankUpdateRequest {
   rank: number;
 }
 
+/** Either field omitted/null leaves that currency untouched. */
+export interface BalanceUpdateRequest {
+  pez?: number | null;
+  kreds?: number | null;
+}
+
 // ─── Rooms ────────────────────────────────────────────────────────────────────
 
 export interface AdminRoom {

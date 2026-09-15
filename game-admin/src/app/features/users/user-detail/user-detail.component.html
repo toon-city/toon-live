@@ -14,6 +14,7 @@
         <div class="info-row"><span>ID</span><span class="mono">{{ user()!.id }}</span></div>
         <div class="info-row"><span>Email</span><span>{{ user()!.email }}</span></div>
         <div class="info-row"><span>Rang</span><p-tag [value]="rankLabel(user()!.rank)" /></div>
+        <div class="info-row"><span>Pez</span><strong>{{ user()!.pez }}</strong></div>
         <div class="info-row"><span>Kreds</span><strong>{{ user()!.kreds }}</strong></div>
         <div class="info-row"><span>Inscription</span><span>{{ user()!.createdAt | date:'dd/MM/yyyy HH:mm' }}</span></div>
         <div class="info-row"><span>Connexion</span><span>{{ user()!.lastLoginAt | date:'dd/MM/yyyy HH:mm' }}</span></div>
@@ -36,6 +37,7 @@
           }
           @if (isAdmin) {
             <p-button label="Rang" icon="pi pi-shield" severity="info" [outlined]="true" size="small" (onClick)="openRank()" styleClass="ml-2" />
+            <p-button label="Argent" icon="pi pi-wallet" severity="info" [outlined]="true" size="small" (onClick)="openBalance()" styleClass="ml-2" />
           }
         </div>
       </p-card>
@@ -72,5 +74,21 @@
   <ng-template pTemplate="footer">
     <p-button label="Annuler" [text]="true" (onClick)="rankDialog = false" />
     <p-button label="Enregistrer" (onClick)="doUpdateRank()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Balance dialog -->
+<p-dialog [(visible)]="balanceDialog" header="Modifier l'argent" [modal]="true" [style]="{width:'350px'}">
+  <div class="field">
+    <label>Pez</label>
+    <input pInputText type="number" min="0" [(ngModel)]="newPez" class="w-full mt-1" />
+  </div>
+  <div class="field mt-3">
+    <label>Kreds</label>
+    <input pInputText type="number" min="0" [(ngModel)]="newKreds" class="w-full mt-1" />
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" [text]="true" (onClick)="balanceDialog = false" />
+    <p-button label="Enregistrer" (onClick)="doUpdateBalance()" />
   </ng-template>
 </p-dialog>

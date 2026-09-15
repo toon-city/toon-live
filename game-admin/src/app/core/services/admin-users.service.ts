@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AdminUser, BanRequest, Page, RankUpdateRequest } from '../models/models';
+import { AdminUser, BalanceUpdateRequest, BanRequest, Page, RankUpdateRequest } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class AdminUsersService {
@@ -30,5 +30,9 @@ export class AdminUsersService {
 
   updateRank(id: string, req: RankUpdateRequest): Observable<AdminUser> {
     return this.http.put<AdminUser>(`${this.base}/${id}/rank`, req);
+  }
+
+  updateBalance(id: string, req: BalanceUpdateRequest): Observable<AdminUser> {
+    return this.http.put<AdminUser>(`${this.base}/${id}/balance`, req);
   }
 }

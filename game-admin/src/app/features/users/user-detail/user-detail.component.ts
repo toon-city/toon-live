@@ -35,6 +35,9 @@ export class UserDetailComponent implements OnInit {
   banReason = '';
   rankDialog = false;
   newRank = 0;
+  balanceDialog = false;
+  newPez = 0;
+  newKreds = 0;
 
   get isAdmin() { return (this.authService.user()?.rank ?? 0) >= 2; }
 
@@ -66,6 +69,19 @@ export class UserDetailComponent implements OnInit {
   doUpdateRank() {
     this.usersService.updateRank(this.user()!.id, { rank: this.newRank }).subscribe({
       next: u => { this.user.set(u); this.rankDialog = false; },
+      error: (e: any) => this.messages.add({ severity: 'error', summary: 'Erreur', detail: e.error?.message })
+    });
+  }
+
+  openBalance() {
+    this.newPez = this.user()!.pez;
+    this.newKreds = this.user()!.kreds;
+    this.balanceDialog = true;
+  }
+
+  doUpdateBalance() {
+    this.usersService.updateBalance(this.user()!.id, { pez: this.newPez, kreds: this.newKreds }).subscribe({
+      next: u => { this.user.set(u); this.balanceDialog = false; },
       error: (e: any) => this.messages.add({ severity: 'error', summary: 'Erreur', detail: e.error?.message })
     });
   }
