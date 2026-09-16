@@ -71,6 +71,36 @@ ZOOM = RESOLUTION * 2  # empirically: ffdec -zoom N == (N/2)x of the logical can
 TOON_JSON = "/root/git/toon-live/game-core/assets/toon/toon.json"
 TOON_PNG = "/root/git/toon-live/game-core/assets/toon/toon.png"
 
+# Per-item manual nudges, applied on TOP of whatever the slot's formula
+# computes -- the same thing this codebase has always done for an outlier
+# item (pant1's own spriteSourceSize was hand-edited across several commits:
+# "pant1 fine-tune offsets round 2 (1px nudges, all 8 directions)",
+# "pant1 per-direction placement nudges", etc. -- see its git log), just
+# centralized here instead of hand-editing baked pixel offsets in a JSON
+# every time a new outlier turns up. No slot formula generalizes perfectly
+# (see SLOT_OFFSET / HAIR_WIDEST_ROW_OFFSET comments for why) -- this is the
+# escape hatch for the item that doesn't fit the formula, not a replacement
+# for it. Keys are item_id; each entry is {"dx": N, "dy": N} (applied to
+# every direction) and/or {"dirs": {"5": {"dx": N, "dy": N}, ...}} (added on
+# top, for a single direction that's off on its own). Units: 3x-canvas px.
+ANCHOR_OVERRIDES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "anchor_overrides.json")
+
+
+def load_anchor_overrides():
+    if os.path.exists(ANCHOR_OVERRIDES_PATH):
+        with open(ANCHOR_OVERRIDES_PATH) as f:
+            return json.load(f)
+    return {}
+
+
+def get_anchor_override(overrides, item_id, direction):
+    cfg = overrides.get(item_id, {})
+    dx, dy = cfg.get("dx", 0), cfg.get("dy", 0)
+    per_dir = cfg.get("dirs", {}).get(str(direction), {})
+    dx += per_dir.get("dx", 0)
+    dy += per_dir.get("dy", 0)
+    return dx, dy
+
 # CA (garment, 16 states) and CHAP/CHEV (accessory, 8 states) both resolve
 # to compass directions via the same table -- CHAP/CHEV just skip the
 # walk/stop split CA has. index: (direction, frame) for CA; index: direction
@@ -270,7 +300,8 @@ def export_milieu(args, frame_dir, toon):
         bdsss = toon[bd_key]["spriteSourceSize"]
         ox = round(bdsss["x"] + bdsss["w"] / 2 - trimmed.width / 2)
         oy = round(bdsss["y"] + bdsss["h"] / 2 - trimmed.height / 2)
-        entries.append((f"{args.item_id}_bd_{d}.png", trimmed, ox, oy, canvas_size[0], canvas_size[1]))
+        dx, dy = get_anchor_override(args.anchor_overrides, args.item_id, d)
+        entries.append((f"{args.item_id}_bd_{d}.png", trimmed, ox + dx, oy + dy, canvas_size[0], canvas_size[1]))
 
     return entries
 
@@ -310,8 +341,9 @@ def cmd_garment(args):
             if bbox is None:
                 continue
             trimmed = canvas.crop(bbox)
+            dx, dy = get_anchor_override(args.anchor_overrides, args.item_id, d)
             fname = f"{args.item_id}_{d}_{n}.png"
-            entries.append((fname, trimmed, bbox[0], bbox[1], canvas_size[0], canvas_size[1]))
+            entries.append((fname, trimmed, bbox[0] + dx, bbox[1] + dy, canvas_size[0], canvas_size[1]))
 
     if not entries:
         print("ERROR: no frames produced", file=sys.stderr)
@@ -410,8 +442,9 @@ def cmd_accessory(args):
         else:
             OY = round(hsss["y"] - HAT_HEAD_K)
 
+        dx, dy = get_anchor_override(args.anchor_overrides, args.item_id, d)
         fname = f"{args.item_id}_{d}.png"
-        entries.append((fname, trimmed, OX, OY, 80 * RESOLUTION, 120 * RESOLUTION))
+        entries.append((fname, trimmed, OX + dx, OY + dy, 80 * RESOLUTION, 120 * RESOLUTION))
 
     if not entries:
         print("ERROR: no frames produced", file=sys.stderr)
@@ -445,6 +478,7 @@ def main():
     a.set_defaults(tint_detect=True, func=cmd_accessory)
 
     args = p.parse_args()
+    args.anchor_overrides = load_anchor_overrides()
     args.func(args)
 
 
