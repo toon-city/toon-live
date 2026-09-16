@@ -51,7 +51,7 @@ Usage:
 
 Requires: JPEXS FFDec (path below), cairosvg, Pillow, numpy.
 """
-import argparse, io, json, os, re, subprocess, sys
+import argparse, io, json, os, re, subprocess, sys, tempfile
 import xml.etree.ElementTree as ET
 
 from PIL import Image
@@ -92,6 +92,8 @@ SLOT_INSTANCE_NAME = {"bas": "vetbas", "milieu": "vetmil", "hat": "chap", "hair"
 # untrimmed retainBounds frame (see cmd_garment).
 SLOT_OFFSET = {"bas": (-97, 3), "milieu": (-102, 34)}
 HAT_HEAD_K = 48  # px (3x canvas): vertical depth a cap sits into the head silhouette
+HAIR_BOTTOM_OFFSET = 124  # px (3x canvas): head.y + this = where hair's bottom edge sits,
+                          # derived from the already-shipped hair7's own position
 
 
 def run_ffdec(*args, timeout=60):
@@ -210,7 +212,7 @@ def write_item(out_dir, item_id, atlas, frames):
 
 
 def cmd_garment(args):
-    work_dir = args.work_dir or "/tmp/swf_to_spritesheet_work"
+    work_dir = args.work_dir or tempfile.mkdtemp(prefix="swf_to_spritesheet_")
     os.makedirs(work_dir, exist_ok=True)
     instance_name = SLOT_INSTANCE_NAME[args.slot]
     char_id = find_named_instance_id(args.swf, instance_name, work_dir)
@@ -256,7 +258,7 @@ def cmd_garment(args):
 
 
 def cmd_accessory(args):
-    work_dir = args.work_dir or "/tmp/swf_to_spritesheet_work"
+    work_dir = args.work_dir or tempfile.mkdtemp(prefix="swf_to_spritesheet_")
     os.makedirs(work_dir, exist_ok=True)
     instance_name = SLOT_INSTANCE_NAME[args.slot]
     char_id = find_named_instance_id(args.swf, instance_name, work_dir)
@@ -311,7 +313,19 @@ def cmd_accessory(args):
         hsss = toon[head_key]["spriteSourceSize"]
         head_center_x = hsss["x"] + hsss["w"] / 2
         OX = round(head_center_x - trimmed.width / 2)
-        OY = round(hsss["y"] - HAT_HEAD_K)
+        if args.slot == "hair":
+            # A cap's own height barely varies by design, so anchoring its
+            # TOP at a fixed depth above the head (HAT_HEAD_K) holds across
+            # different caps. Hair styles vary wildly in height (short bob
+            # vs. tall spikes) -- a fixed top-offset either floats a tall
+            # style above the scalp or clips it, confirmed visually on a
+            # spot check across several styles. Anchor the BOTTOM instead
+            # (where hair actually meets the head, roughly constant
+            # regardless of how far up a style extends) using the already-
+            # shipped hair7's own proven position as the reference depth.
+            OY = round((hsss["y"] + HAIR_BOTTOM_OFFSET) - trimmed.height)
+        else:
+            OY = round(hsss["y"] - HAT_HEAD_K)
 
         fname = f"{args.item_id}_{d}.png"
         entries.append((fname, trimmed, OX, OY, 80 * RESOLUTION, 120 * RESOLUTION))
