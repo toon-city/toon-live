@@ -1,7 +1,17 @@
 # Toon Live — AI Project Context
 
-> Auto-generated from codebase analysis. Last update: 2026-03-24.
+> Auto-generated from codebase analysis. Last update: 2026-09-17.
 > Use this file as context when asking an AI assistant to work on this project.
+>
+> For the day-to-day dev workflow (starting the stack, live-verifying a
+> change via Playwright, the multi-repo commit/push discipline), see
+> `.claude/skills/toon-live-dev/SKILL.md` — this file is the architecture/API/
+> schema reference, that one is the process. Sections below cover what was
+> true as of the dates given; newer systems (furniture wallpaper/floor zones,
+> the avatar clothing/animation pipeline in `game-avatar`, friends, marriage,
+> métiers, trade offers) exist in the codebase but predate/postdate this
+> file's last full pass unevenly — trust the code over this doc when they
+> disagree, and prefer extending this doc over leaving a gap.
 
 ---
 
@@ -154,7 +164,8 @@ Key user flows:
 |---|---|
 | `@toon-live/game-types` | Shared domain types, STOMP destinations, event payloads |
 | `@toon-live/game-socket` | `GameSocket` class — thin STOMP adapter |
-| `game-core` | PixiJS rendering engine (avatar, rooms, furniture, loading) |
+| `game-core` | PixiJS rendering engine (rooms/house, furniture, collision, camera, input) — imports `Avatar` FROM `game-avatar` |
+| `@toon-live/game-avatar` | Avatar rendering: body sheet, clothing sprites, direction/animation system, `AssetBaseUrl`. **Not importable by name symmetrically with game-core** — game-avatar cannot import game-core (would be circular), so a few things (`ZOrder.ts`, notably) are hand-duplicated between the two and must be edited in both places. |
 
 ### Assets server
 | Layer | Technology |
@@ -175,6 +186,9 @@ toon-live/                          ← monorepo root (Bun workspaces)
 ├── docker-compose.dev.yml          ← dev: postgres + Adminer only
 ├── Makefile                        ← dev targets (dev, dev-api, dev-server, dev-web, dev-admin, prod…)
 ├── dev.sh                          ← tmux launcher (windows: db[0], api[1], server[2], web[3], admin[4])
+├── .claude/
+│   ├── skills/toon-live-dev/       ← dev workflow: stack startup, live-Playwright-verify pattern, commit/push
+│   └── agents/toon-live-verifier.md ← subagent: live-verifies a behavior via Playwright, reports data
 ├── docs/
 │   └── ai-context.md               ← THIS FILE
 │
@@ -213,16 +227,23 @@ toon-live/                          ← monorepo root (Bun workspaces)
 │
 ├── game-core/                      ← PixiJS rendering engine (library, no framework)
 │   └── src/
-│       ├── GameCore.ts             ← main entry (house rendering, avatar, furniture, camera)
-│       ├── game/
-│       │   ├── avatar/             ← Avatar class, body parts, clothing system
-│       │   └── textures/           ← GameItemManager, BaseTextureLoader
+│       ├── GameCore.ts             ← main entry (house rendering, avatar, furniture, camera, textures)
 │       ├── modules/
-│       │   ├── furniture/          ← FurnitureController, FurnitureView
-│       │   └── house/              ← HouseParser, HouseView, AreaView, WallView, DoorView
+│       │   ├── common/ZOrder.ts    ← isometric depth-sort — DUPLICATED in game-avatar, keep both in sync
+│       │   ├── furniture/          ← FurnitureController (place/move/rotate/remove, collision), FurnitureView
+│       │   └── house/              ← HouseParser (raw house_data → world coords), HouseView, AreaView,
+│       │                              WallView, DoorView — wall/floor zones (wallpaper) live here too
+│       ├── game/textures/          ← GameItemManager (furniture bases + wall/floor texture loading)
+│       ├── utils/
+│       │   ├── project.ts          ← the isometric world→screen projection (angle -45°, depthFactor √2)
+│       │   └── collision.ts        ← SAT polygon collision, wall polygons, convexHull()
 │       └── core/
 │           ├── manager/            ← FurnitureBaseManager
 │           └── models/             ← Furniture, FurnitureBase, Area, Door, Wall, House
+│
+├── game-avatar/                    ← Avatar rendering (library, no framework)
+│   └── src/game/avatar/            ← Avatar, body parts, clothing sprites, direction/animation
+│       └── ../../modules/common/ZOrder.ts  ← DUPLICATE of game-core's own copy, see above
 │
 ├── game-web/                       ← Angular player client (port 4200)
 │   └── src/app/
@@ -313,10 +334,23 @@ OWN  = 2   // full control + house XML + manage users
 ### Items & Shop System
 ```
 ItemType:    FURNITURE | CLOTHING | MISC
-ItemSubType: FLOOR | WALL | WALLPAPER | PIECE       (furniture)
+ItemSubType: PIECE | WALLPAPER | FLOOR              (furniture)
              HAIRSTYLE | HAT | TOP | BOTTOM | MAKEUP (clothing)
+             RING (clothing — see the ItemSubType enum's own comment for why)
              OTHER
 ```
+- **PIECE** — a normal placeable furniture instance (x/y/orientation),
+  `FurnitureStateService.place/move/rotate/remove`.
+- **WALLPAPER / FLOOR** — a texture applied to one of a room's own wall/floor
+  zones instead of an x/y point (`zone_type`+`zone_index` columns on
+  `user_items`, nullable, mutually exclusive with x/y/orientation — see the
+  3-way `chk_user_items_placement_consistency` check). `zone_index` is the
+  array index into `house_data`'s own `walls[]`/`floors[]` — stable per room,
+  computed client-side by `HouseParser` and server-side (for the door-spawn
+  calculation) by `HouseGeometry.java`, which must stay in sync with
+  `HouseParser.ts`'s projection pipeline by hand.
+- `WALL` (bare, no zone system) is a leftover/unused subtype value — not the
+  same thing as `WALLPAPER`.
 
 **Shops** (enum `ShopId`): `COUPE_TIFF` | `IKEBO` | `VESTIS`
 
@@ -443,11 +477,20 @@ Auth: STOMP `connect` header `Authorization: Bearer <token>` validated by `JwtCh
 /app/avatar/move     { x, y, direction }
 /app/avatar/say      { text }
 /app/chat            { text }
-/app/furniture/place  { baseId, x, y, orientation }
+/app/furniture/place  { userItemId, x, y, orientation }   ⚠ userItemId, not baseId — server derives baseId itself
 /app/furniture/move   { instanceId, x, y }
 /app/furniture/rotate { instanceId, orientation }
 /app/furniture/remove { instanceId }
+/app/texture/apply    { userItemId, zoneType: 'WALL'|'FLOOR', zoneIndex }   ← wallpaper/floor
+/app/texture/remove   { zoneType, zoneIndex }
 ```
+Furniture place/move/rotate/remove: server enforces ownership + room-owner-or-
+admin permission only (`FurnitureStateService`/`TextureStateService`,
+`RoomAccessService.canManageRoom`) — it has **no room geometry at all** and
+does zero collision validation. Collision is entirely the client's job
+(`FurnitureController` in game-core: drag, and — as of 2026-09 — rotate too,
+see §Known Gotchas below) before it ever sends a request; the server just
+trusts and broadcasts whatever a well-behaved client already validated.
 
 #### Server → Client broadcasts (per-room topic `/topic/room/{roomId}/`)
 ```
@@ -460,7 +503,14 @@ furniture-place FurniturePlaceEvent
 furniture-move  FurnitureMoveEvent
 furniture-rotate FurnitureRotateEvent
 furniture-remove FurnitureRemoveEvent
+texture-apply   TextureApplyEvent    ← wallpaper/floor applied to a zone
+texture-remove  TextureRemoveEvent
 ```
+Every one of these — including the sender's own action — comes back as a
+broadcast to everyone in the room, the sender included; the client applies
+its OWN state changes only from this echo, never optimistically (see
+`GameCanvasComponent`'s `pendingNewPlacements`/silent-echo handling for why
+naively re-emitting on receipt of your own echo would ping-pong forever).
 
 #### Server → Client private (`/user/queue/`)
 ```
@@ -876,13 +926,29 @@ this.gs.sendChat(roomId, text);
 
 ### Furniture placement flow
 ```
-Client: gs.sendFurniturePlace(roomId, { baseId, x, y, orientation })
-Server: RoomStompController.placeFurniture()
-      → RoomStateService.placeFurniture() → FurnitureState stored in memory
-      → broadcast RemoteFurniturePlaceEvent to /topic/room/{roomId}/furniture-place
+Client: gs.sendFurniturePlace(roomId, { userItemId, x, y, orientation })
+Server: RoomStompController.furniturePlace()
+      → FurnitureStateService.place() → UserItem row updated (Postgres, not in-memory)
+      → broadcast FurniturePlaceEvent to /topic/room/{roomId}/furniture-place
 Client: SocketService.furniturePlace$.next(p)
-      → GameCanvasComponent → gc.placeFurniture(p)
+      → GameCanvasComponent → gc.spawnFurniture(...)
 ```
+Move/rotate/remove follow the identical shape (`FurnitureStateService.move/
+rotate/remove`, `furniture-move/-rotate/-remove` topics). Wallpaper/floor
+(`TextureStateService.apply/remove`, `texture-apply/-remove` topics) is the
+same pattern targeting a zone instead of an x/y.
+
+⚠ Every local user action (drag, right-click rotate, the preview panel's
+rotate button) goes through `GameCore`/`FurnitureController` FIRST — which
+collision-checks and updates the Pixi scene locally — and only sends to the
+server on success, via a room-wide `GameCore` event listener in
+`GameCanvasComponent` (`'furniture:placed'`/`'furniture:rotated'`), not
+inline at the interaction site. `FurnitureController.rotateFurniture()`
+takes a `{ silent?: boolean }` option: `silent: true` when applying an
+already-server-confirmed echo (skips re-emitting the event), `false`
+(default) for a genuine new local request — get this backwards and a
+rotation ping-pongs back to the server on every client that receives the
+broadcast.
 
 ### Flyway migration naming
 ```
