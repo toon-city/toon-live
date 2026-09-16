@@ -31,23 +31,29 @@ compass direction each CA/CHAP index is) and cross-checked against the
 game's own movement bitmask (up=2, down=1, left=8, right=4). See the CA_TO_DIR
 comment below for the resulting table.
 
-Positioning is NOT re-derived from the SWF's own placement matrices --
-that was tried and abandoned this session (svgRetainBounds only guarantees
-a consistent canvas across ONE symbol's own frames, not a shared origin
-between different symbols, so cross-symbol matrix math produced garbage).
-Instead each item slot uses a fixed pixel offset, independently calibrated
-by center-matching a pilot item directly against the BODY's own real
-anatomical anchor (hip overlap zone for "bas", torso bbox for "milieu",
-head bbox for accessories) -- see SLOT_OFFSET / HAT_HEAD_K. Anchoring
-against another shipped item instead of the body was tried once and
-inherited that item's own imprecision (pant1 needed several rounds of
-manual nudging historically; matching against its json landed ~9px off).
-Verify visually before trusting a new slot's calibration on more than one
-item; the offset that works for one item in a slot should hold for all
-others sharing the same placeholder, but confirm on all 8 directions the
-first time (this session found real per-direction exceptions on the body
-itself -- shared-symbol mirror ambiguities, a front/back content mismatch
--- so don't assume a single global offset is automatically safe).
+Positioning for "accessory" (hat/hair) IS re-derived from the SWF's own
+placement matrix -- see cmd_accessory's "self-anchor" comment. Cross-symbol
+matrix math (combining a LOADED item's own coordinates with the BODY rig's
+placeholder matrix) was tried and abandoned earlier this session and ruled
+out entirely; the technique that actually works is narrower and doesn't
+need that: within one item's OWN 8-direction timeline, retainBounds keeps
+a single, real, consistent (0,0) origin (confirmed: the body rig places
+casquette/cheveux ONCE, never moves them again across its own 16-frame
+timeline -- same static-placeholder pattern holds in every item SWF
+checked). Calibrate dir1 against the body with the old heuristic (still
+needed -- it's the one direction with nothing to anchor against yet), then
+carry that SAME origin through to the other 7 directions via each frame's
+own bbox. No cross-file assumption, no shared template needed -- confirmed
+on a 9-item family from one shared template AND on lone items with no
+siblings at all.
+
+"garment" (bas/milieu) still uses the older, plainer techniques: a fixed
+pixel offset for "bas" (center-matched once against the body's hip overlap
+zone, proven across 176 items sharing one source-SWF family) and per-frame
+body-torso-center-matching for "milieu" (SLOT_OFFSET's comment has the
+full reasoning for why each slot ended up where it did, including the
+cross-file-registration dead end that self-anchor for accessories got
+past).
 
 Usage:
   python3 swf_to_spritesheet.py garment INPUT.swf ITEM_ID --slot bas
@@ -376,6 +382,68 @@ def cmd_garment(args):
     print(f"wrote {args.item_id}.png/.json ({len(frames)} frames) to {args.out_dir}")
 
 
+def heuristic_ox_oy(slot, trimmed, hsss):
+    """Fallback per-direction placement when there's no usable shared origin
+    for this item (see cmd_accessory) -- the same formulas used before the
+    self-anchor technique existed. Also used to calibrate dir1 even on the
+    self-anchor path: it's the one direction we still independently place,
+    everything else is derived from it geometrically (see cmd_accessory).
+    """
+    head_center_x = hsss["x"] + hsss["w"] / 2
+    OX = round(head_center_x - trimmed.width / 2)
+    if slot == "hair":
+        # A cap's own height barely varies by design, so anchoring its TOP
+        # at a fixed depth above the head (HAT_HEAD_K) holds across
+        # different caps. Hair styles vary far more (a bun/spike/bow
+        # extends way up, a ponytail/sidelock extends way down) -- BOTH
+        # top-anchor and bottom-anchor were tried and both failed: top-
+        # anchor floats/clips tall styles, and bottom-anchor (matching
+        # hair7's position) shoves a style with little downward extension
+        # down over the face, and pulls a style with a lot of downward
+        # reach up so far its top floats above the head (confirmed on
+        # coiffure5/6 vs. coiffure23). The widest row of the silhouette is
+        # nearly always around ear/temple level regardless of how far the
+        # style reaches up or down from there -- anchoring THAT row is
+        # what's actually invariant. Offset calibrated against the cluster
+        # of items that were never flagged as misplaced, mean ~34px.
+        arr = np.array(trimmed)
+        row_widths = (arr[:, :, 3] > 10).sum(axis=1)
+        widest_row_local = int(np.argmax(row_widths)) if row_widths.any() else 0
+        OY = round((hsss["y"] + HAIR_WIDEST_ROW_OFFSET) - widest_row_local)
+    else:
+        OY = round(hsss["y"] - HAT_HEAD_K)
+    return OX, OY
+
+
+def render_padded(svg_text, pad):
+    """Rasterize a retainBounds SVG frame after overriding its declared
+    canvas to `2*pad` square and shifting the root transform by (pad, pad)
+    -- see cmd_accessory's self-anchor comment for why: retainBounds'
+    DECLARED width/height can be smaller than the frame's true content
+    (confirmed on coiffure16 -- its declared canvas silently clipped off
+    one whole pigtail), but its transform staying at (0,0) translate is
+    reliable, so re-declaring a generous canvas around that same (0,0)
+    keeps the one thing worth keeping (a shared origin across this
+    symbol's own frames) while fixing the clipping. Returns (image, bbox)
+    or (image, None) if the frame is empty.
+    """
+    padded = re.sub(r'height="[\d.]+px" width="[\d.]+px"', f'height="{pad*2}px" width="{pad*2}px"', svg_text, count=1)
+    padded = re.sub(r'matrix\(([\d.]+), 0\.0, 0\.0, ([\d.]+), 0\.0, 0\.0\)',
+                     rf'matrix(\1, 0.0, 0.0, \2, {pad}, {pad})', padded, count=1)
+    im = Image.open(io.BytesIO(cairosvg.svg2png(bytestring=padded.encode("utf-8")))).convert("RGBA")
+    return im, im.getbbox()
+
+
+def has_degenerate_bounds(frame_dir):
+    f1 = os.path.join(frame_dir or "", "1.svg")
+    if not os.path.exists(f1):
+        return True
+    with open(f1, errors="ignore") as f:
+        header = f.read(300)
+    m = re.search(r'height="(-?[\d.]+)px" width="(-?[\d.]+)px"', header)
+    return bool(m) and (float(m.group(1)) <= 0 or float(m.group(2)) <= 0)
+
+
 def cmd_accessory(args):
     work_dir = args.work_dir or tempfile.mkdtemp(prefix="swf_to_spritesheet_")
     os.makedirs(work_dir, exist_ok=True)
@@ -385,85 +453,83 @@ def cmd_accessory(args):
         print(f"ERROR: no '{instance_name}' instance found in {args.swf}", file=sys.stderr)
         sys.exit(1)
 
-    # Always per-frame auto-crop, never retainBounds: an accessory's 8
-    # directions are independently positioned against the body anyway (no
-    # need for a shared canvas across frames, unlike a garment's 16-state
-    # CA timeline), and retainBounds turned out to be actively harmful here
-    # -- confirmed on coiffure16's source file, where its retainBounds
-    # export silently CLIPPED frame 1 to a narrow canvas that only fit one
-    # pigtail, dropping the other pigtail and the top of the head entirely
-    # (no negative/zero dimension, so the old has_degenerate_bounds() check
-    # didn't catch it -- the canvas was just too small, not malformed).
-    # Per-frame auto-crop doesn't have this failure mode since each frame
-    # gets its own tight-fit canvas from its own content, not a shared one
-    # that has to be big enough for all 8.
-    frame_dir = export_all_frames(args.swf, char_id, work_dir, retain_bounds=False)
+    toon = json.load(open(TOON_JSON))["frames"]
+    tint_target = "c1" if args.slot == "hair" else None  # hat fabric is never tinted
+    PAD = 500
+
+    # Self-anchor: the ONE (translateX, translateY) matrix the source SWF
+    # places this symbol's whole timeline at, per its OWN root, is fixed --
+    # never changes across the 8 CHAP/CHEV frames (confirmed: casquette and
+    # cheveux each get exactly one PlaceObject in the body rig's own
+    # clipType timeline, never moved again; same pattern held on every item
+    # SWF checked). That means each frame's local (0,0) origin -- where
+    # retainBounds' own transform stays fixed at (see render_padded) -- is
+    # the item's real, single, consistent registration point, IF retainBounds
+    # produces valid (non-degenerate) geometry for this file. Calibrate dir1
+    # with the heuristic (still the best guess for the very first placement
+    # -- it has nothing to anchor against yet), then place every OTHER
+    # direction by carrying that SAME origin through via each frame's own
+    # bbox -- no independent heuristic guess per direction, no cross-file
+    # assumption either (this works even for a lone item, no matching
+    # sibling needed). Verified on a 9-item family sharing one source
+    # template: one calibrated point placed all 8 directions of all 9 items
+    # correctly with zero per-direction adjustment.
+    #
+    # Falls back to the OLD per-direction heuristic (independently, for
+    # every direction) when retainBounds gives degenerate geometry for this
+    # file (seen on a hat item -- negative height) -- no shared origin to
+    # carry over then, so there's nothing to propagate.
+    rb_frame_dir = export_all_frames(args.swf, char_id, work_dir, retain_bounds=True)
+    self_anchor = rb_frame_dir and not has_degenerate_bounds(rb_frame_dir)
+    frame_dir = rb_frame_dir if self_anchor else export_all_frames(args.swf, char_id, work_dir, retain_bounds=False)
     if not frame_dir:
         print("ERROR: ffdec export produced no frames", file=sys.stderr)
         sys.exit(1)
 
-    toon = json.load(open(TOON_JSON))["frames"]
-    tint_target = "c1" if args.slot == "hair" else None  # hat fabric is never tinted
-
     entries = []
-    for chap, d in CHAP_TO_DIR.items():
+    T = None  # canvas-space position of this item's own (0,0), set from dir1
+
+    def load_frame(chap):
         svg_path = os.path.join(frame_dir, f"{chap}.svg")
         if not os.path.exists(svg_path):
+            return None
+        with open(svg_path, errors="ignore") as f:
+            return f.read()
+
+    # dir1 first, however CHAP_TO_DIR happens to order it, so T is ready
+    # before any other direction needs it.
+    ordered = sorted(CHAP_TO_DIR.items(), key=lambda kv: kv[1] != 1)
+    for chap, d in ordered:
+        svg = load_frame(chap)
+        if svg is None:
             print(f"WARNING: missing frame {chap}, skipping", file=sys.stderr)
             continue
-        with open(svg_path, errors="ignore") as f:
-            svg = f.read()
-        png = cairosvg.svg2png(bytestring=svg.encode("utf-8"))
-        im = Image.open(io.BytesIO(png)).convert("RGBA")
+
+        if self_anchor:
+            im, bbox = render_padded(svg, PAD)
+        else:
+            im = Image.open(io.BytesIO(cairosvg.svg2png(bytestring=svg.encode("utf-8")))).convert("RGBA")
+            bbox = im.getbbox()
+        if bbox is None:
+            continue
 
         if tint_target and args.tint_detect and has_named_subinstance(svg, tint_target):
             im = neutralize_white_point(im)  # whole-image: color is only ever this one tone in practice
-
-        bbox = im.getbbox()
-        if bbox is None:
-            continue
         trimmed = im.crop(bbox)
 
         head_key = f"human_hd_{d}_0.png"
         if head_key not in toon:
             continue
         hsss = toon[head_key]["spriteSourceSize"]
-        head_center_x = hsss["x"] + hsss["w"] / 2
-        OX = round(head_center_x - trimmed.width / 2)
-        if args.slot == "hair":
-            # A cap's own height barely varies by design, so anchoring its
-            # TOP at a fixed depth above the head (HAT_HEAD_K) holds across
-            # different caps. Hair styles vary far more (a bun/spike/bow
-            # extends way up, a ponytail/sidelock extends way down) -- BOTH
-            # top-anchor and bottom-anchor were tried and both failed: top-
-            # anchor floats/clips tall styles, and bottom-anchor (matching
-            # hair7's position) was proven wrong here too -- on a style with
-            # little downward extension (a snug cap-like cut, or a fringe
-            # with no long sides) the bottom sits so close to the top that
-            # bottom-anchoring shoves the WHOLE style down over the face
-            # (confirmed on coiffure5/6: short trimmed height dragged the
-            # whole thing down to cover the eyes); conversely a style with a
-            # lot of downward reach (long twin pigtails, coiffure23) got
-            # pulled up so far the top floated above the head.
-            #
-            # Neither the top nor the bottom of the trimmed bbox is a
-            # reliable proxy for "where this style actually sits on the
-            # skull" once up-reach and down-reach vary independently per
-            # style. The widest row of the silhouette is: nearly every
-            # style (buns, bobs, caps, pigtails, pixie cuts) is widest
-            # around ear/temple level, where it wraps the head, regardless
-            # of how far it extends up or down from there. Anchoring THAT
-            # row is what's actually invariant. Offset calibrated against
-            # the cluster of items that were never flagged as misplaced
-            # (coiffure1/2/3/4/7/8/10/13/14/16/17/20/21/22/25/26/27, mean
-            # ~34px, tight relative to the ~130px spread bottom-anchoring
-            # produced across the same set).
-            arr = np.array(trimmed)
-            row_widths = (arr[:, :, 3] > 10).sum(axis=1)
-            widest_row_local = int(np.argmax(row_widths)) if row_widths.any() else 0
-            OY = round((hsss["y"] + HAIR_WIDEST_ROW_OFFSET) - widest_row_local)
+
+        if not self_anchor:
+            OX, OY = heuristic_ox_oy(args.slot, trimmed, hsss)
+        elif d == 1:
+            OX, OY = heuristic_ox_oy(args.slot, trimmed, hsss)
+            T = (OX + (PAD - bbox[0]), OY + (PAD - bbox[1]))
         else:
-            OY = round(hsss["y"] - HAT_HEAD_K)
+            OX = round(T[0] - (PAD - bbox[0]))
+            OY = round(T[1] - (PAD - bbox[1]))
 
         dx, dy = get_anchor_override(args.anchor_overrides, args.item_id, d)
         fname = f"{args.item_id}_{d}.png"
@@ -474,7 +540,8 @@ def cmd_accessory(args):
         sys.exit(1)
     atlas, frames = pack_atlas(entries)
     write_item(args.out_dir, args.item_id, atlas, frames)
-    print(f"wrote {args.item_id}.png/.json ({len(frames)} frames) to {args.out_dir}")
+    mode = "self-anchor" if self_anchor else "heuristic fallback (degenerate retainBounds)"
+    print(f"wrote {args.item_id}.png/.json ({len(frames)} frames) to {args.out_dir}  [{mode}]")
 
 
 def main():
