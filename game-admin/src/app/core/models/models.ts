@@ -141,6 +141,22 @@ export interface AdminMetierRequest {
   outfitHatItemId: number | null;
 }
 
+// ─── Centre d'échange ─────────────────────────────────────────────────────────
+
+export interface TradeOfferInfo {
+  id: number;
+  offererId: string;
+  offererUsername: string;
+  offeredItem: ItemInfo;
+  offeredPez: number;
+  requestedItem: ItemInfo;
+  requestedPez: number;
+  status: 'OPEN' | 'ACCEPTED' | 'CANCELLED';
+  createdAt: string;
+  acceptedByUsername: string | null;
+  resolvedAt: string | null;
+}
+
 // ─── Shop ─────────────────────────────────────────────────────────────────────
 
 export interface ShopItem {

@@ -62,6 +62,12 @@ export const routes: Routes = [
       import('./features/metiers/metiers.component').then(m => m.MetiersComponent),
   },
   {
+    path: 'trades',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./features/trades/trades.component').then(m => m.TradesComponent),
+  },
+  {
     path: 'clothing-studio',
     canActivate: [adminGuard],
     loadComponent: () =>
