@@ -330,21 +330,19 @@ def cmd_accessory(args):
         print(f"ERROR: no '{instance_name}' instance found in {args.swf}", file=sys.stderr)
         sys.exit(1)
 
-    def has_degenerate_bounds(frame_dir):
-        f1 = os.path.join(frame_dir or "", "1.svg")
-        if not os.path.exists(f1):
-            return True
-        with open(f1, errors="ignore") as f:
-            header = f.read(300)
-        m = re.search(r'height="(-?[\d.]+)px" width="(-?[\d.]+)px"', header)
-        return bool(m) and (float(m.group(1)) <= 0 or float(m.group(2)) <= 0)
-
-    frame_dir = export_all_frames(args.swf, char_id, work_dir, retain_bounds=True)
-    if has_degenerate_bounds(frame_dir):
-        # Some symbols report a degenerate bounding box under retainBounds
-        # (seen once, negative height) -- fall back to per-frame auto-crop.
-        # Harmless here: each direction is independently positioned anyway.
-        frame_dir = export_all_frames(args.swf, char_id, work_dir, retain_bounds=False)
+    # Always per-frame auto-crop, never retainBounds: an accessory's 8
+    # directions are independently positioned against the body anyway (no
+    # need for a shared canvas across frames, unlike a garment's 16-state
+    # CA timeline), and retainBounds turned out to be actively harmful here
+    # -- confirmed on coiffure16's source file, where its retainBounds
+    # export silently CLIPPED frame 1 to a narrow canvas that only fit one
+    # pigtail, dropping the other pigtail and the top of the head entirely
+    # (no negative/zero dimension, so the old has_degenerate_bounds() check
+    # didn't catch it -- the canvas was just too small, not malformed).
+    # Per-frame auto-crop doesn't have this failure mode since each frame
+    # gets its own tight-fit canvas from its own content, not a shared one
+    # that has to be big enough for all 8.
+    frame_dir = export_all_frames(args.swf, char_id, work_dir, retain_bounds=False)
     if not frame_dir:
         print("ERROR: ffdec export produced no frames", file=sys.stderr)
         sys.exit(1)
