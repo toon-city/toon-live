@@ -55,13 +55,35 @@ from PIL import Image
 import cairosvg
 
 FFDEC = "/mnt/c/Program Files (x86)/FFDec/ffdec.jar"
-RESOLUTION = 3
+RESOLUTION = 2  # 3x (matching the avatar pipeline) made individual large items reasonable
+                # (rond_centre ~10MB in VRAM, fine) but blew up once ANY item had many
+                # frames (dancefloor's real 39-frame animation: 700MB). User's call: drop
+                # the whole furniture category to 2x rather than special-case only animated
+                # items -- less sharp than 3x, but every item (animated or not) stays a
+                # reasonable size without per-item tuning.
 ZOOM = RESOLUTION * 2  # matches swf_to_spritesheet.py's convention; see module doc for the zoom-2-is-current-1x proof
 PAD = 3000  # px, pre-zoom canvas padding. 1000 silently clipped several items (a statue's
             # local origin isn't centered on its own art -- confirmed content bbox touching
             # x=0 exactly on haie/rondcentre/statut1-4/statut_, i.e. real content lost, not
             # just a tight-but-correct crop). Verified 3000 clears every jardin item with
             # margin to spare; bump further if a future category needs more.
+
+# An animated nested child (see find_animated_child) gets its OWN, much
+# lower, resolution and frame count than a static orientation -- exporting
+# dancefloor's real 39-frame color-cycle at the standard 3x/every-frame
+# settings produced a 3012x58272px atlas (~700MB of uncompressed VRAM per
+# GPU upload: 39 copies of a 3000x1488 frame). This is a large FLOOR PLANE,
+# not a small prop -- its per-pixel sharpness matters far less than a
+# close-up avatar accessory, and a color-cycling light show doesn't need
+# every one of 39 near-identical tween steps to read as smooth animation.
+# ANIM_ZOOM=2 (1x, same as this item's OTHER static orientations' source
+# resolution) + keeping every 3rd frame (13 of 39) brings a single frame
+# down to roughly 1000x496 and the whole atlas to ~6.5MB uncompressed --
+# still a real animation, not a slideshow, at a size that's actually
+# shippable. Revisit per-item if a future animated item's own art is small
+# enough that the standard resolution/frame-count wouldn't be excessive.
+ANIM_ZOOM = 2
+ANIM_FRAME_STRIDE = 3
 
 
 def run_ffdec(*args, timeout=60):
@@ -82,9 +104,9 @@ def find_named_instance_id(swf_path, name, work_dir):
     return m.group(1) if m else None
 
 
-def export_all_frames(swf_path, char_id, work_dir):
-    out_dir = os.path.join(work_dir, "frames")
-    run_ffdec("-config", "svgRetainBounds=true", "-zoom", str(ZOOM), "-format", "sprite:svg",
+def export_all_frames(swf_path, char_id, work_dir, zoom=ZOOM):
+    out_dir = os.path.join(work_dir, f"frames_{char_id}_{zoom}")
+    run_ffdec("-config", "svgRetainBounds=true", "-zoom", str(zoom), "-format", "sprite:svg",
               "-selectid", char_id, "-export", "sprite", out_dir, swf_path)
     for d in os.listdir(out_dir) if os.path.isdir(out_dir) else []:
         if d.startswith("DefineSprite_"):
@@ -115,6 +137,45 @@ def anon_marker_re(marker_char_id):
     return re.compile(
         rf'^    <use ffdec:characterId="{marker_char_id}"[^>]*\btransform="matrix\(1\.0, 0\.0, 0\.0, 1\.0, (-?[\d.]+), (-?[\d.]+)\)"[^>]*/>\s*$',
         re.MULTILINE)
+
+
+CHILD_USE_RE = re.compile(
+    r'^    <use ffdec:characterId="(\d+)"[^>]*\btransform="matrix\(1\.0, 0\.0, 0\.0, 1\.0, (-?[\d.]+), (-?[\d.]+)\)"[^>]*/>\s*$',
+    re.MULTILINE)
+
+
+def build_frame_count_map(work_dir):
+    """characterId -> that symbol's own frameCount, read once from the
+    already-fetched meta.xml (find_named_instance_id() wrote it here).
+    Used to tell an animated nested child (e.g. dancefloor's 39-frame
+    color-cycling floor) apart from a plain static shape (frameCount=1) --
+    see process_item()'s animated-orientation branch.
+    """
+    xml_path = os.path.join(work_dir, "meta.xml")
+    with open(xml_path, errors="ignore") as f:
+        content = f.read()
+    return {m.group(2): int(m.group(1)) for m in
+            re.finditer(r'frameCount="(\d+)"[^>]*spriteId="(\d+)"', content)}
+
+
+def find_animated_child(clean_svg, frame_counts):
+    """After strip_points() removes the ground-anchor markers, this
+    orientation's frame should have exactly one root-level <use> left: the
+    item's own art. If that art is itself a nested MovieClip with more than
+    one frame (not just a static shape), it's an animation FFDec's static
+    per-orientation SVG export freezes on frame 1 of -- e.g. dancefloor's
+    checkerboard light cycle. Returns (child_char_id, offset_x, offset_y)
+    in the same pre-zoom units as everything else (the child's placement
+    matrix within this orientation's own frame), or None if this
+    orientation's art is just a plain static shape.
+    """
+    matches = CHILD_USE_RE.findall(clean_svg)
+    if len(matches) != 1:
+        return None
+    char_id, tx, ty = matches[0]
+    if frame_counts.get(char_id, 1) <= 1:
+        return None
+    return char_id, float(tx), float(ty)
 
 
 def strip_points(svg_text, marker_depth_order, marker_char_id):
@@ -211,9 +272,11 @@ def process_item(swf_path, item_id, out_dir, work_dir=None):
         print("ERROR: ffdec export produced no frames", file=sys.stderr)
         sys.exit(1)
 
+    frame_counts = build_frame_count_map(work_dir)
     marker_depth_order = None
     marker_char_id = None
     entries = []
+    animated_orientations = 0
     for n in range(1, n_frames + 1):
         svg_path = os.path.join(frame_dir, f"{n}.svg")
         if not os.path.exists(svg_path):
@@ -228,17 +291,51 @@ def process_item(swf_path, item_id, out_dir, work_dir=None):
             marker_char_id = first_named[0][0] if first_named else None
         clean_svg, points_raw = strip_points(svg, marker_depth_order, marker_char_id)
 
-        im, bbox = render_padded(clean_svg)
-        if bbox is None:
-            print(f"WARNING: frame {n} is empty after stripping points, skipping", file=sys.stderr)
-            continue
-        trimmed = im.crop(bbox)
+        animated = find_animated_child(clean_svg, frame_counts)
+        if animated:
+            # This orientation's own art is itself a multi-frame MovieClip
+            # (e.g. dancefloor's 39-frame color cycle) -- FFDec's static
+            # per-orientation SVG export freezes it on frame 1, so pull its
+            # OWN frames independently and reposition each using the child's
+            # placement offset within this orientation's frame (see
+            # find_animated_child's doc) so the ground points -- extracted
+            # once, from the STILL orientation frame -- land on every
+            # animation frame identically (the footprint doesn't move, only
+            # the colors cycle).
+            child_id, off_x, off_y = animated
+            child_frame_dir, child_n = export_all_frames(swf_path, child_id, work_dir, zoom=ANIM_ZOOM)
+            if not child_frame_dir or child_n <= 1:
+                print(f"WARNING: orientation {n}'s animated child export failed, "
+                      f"falling back to static", file=sys.stderr)
+                animated = None
+            else:
+                animated_orientations += 1
+                for out_n, m in enumerate(range(1, child_n + 1, ANIM_FRAME_STRIDE)):
+                    csvg_path = os.path.join(child_frame_dir, f"{m}.svg")
+                    if not os.path.exists(csvg_path):
+                        continue
+                    with open(csvg_path, errors="ignore") as f:
+                        csvg = f.read()
+                    im, bbox = render_padded(csvg)
+                    if bbox is None:
+                        continue
+                    trimmed = im.crop(bbox)
+                    points_px = [(name, round((x - off_x) * ANIM_ZOOM + PAD - bbox[0]),
+                                  round((y - off_y) * ANIM_ZOOM + PAD - bbox[1]))
+                                 for (name, x, y) in points_raw]
+                    fname = f"{item_id}_{n}_{out_n}.png"
+                    entries.append((fname, trimmed, points_px))
 
-        points_px = [(name, round(x * ZOOM + PAD - bbox[0]), round(y * ZOOM + PAD - bbox[1]))
-                     for (name, x, y) in points_raw]
-
-        fname = f"{item_id}_{n}.png"
-        entries.append((fname, trimmed, points_px))
+        if not animated:
+            im, bbox = render_padded(clean_svg)
+            if bbox is None:
+                print(f"WARNING: frame {n} is empty after stripping points, skipping", file=sys.stderr)
+                continue
+            trimmed = im.crop(bbox)
+            points_px = [(name, round(x * ZOOM + PAD - bbox[0]), round(y * ZOOM + PAD - bbox[1]))
+                         for (name, x, y) in points_raw]
+            fname = f"{item_id}_{n}.png"
+            entries.append((fname, trimmed, points_px))
 
     if not entries:
         print("ERROR: no frames produced", file=sys.stderr)
@@ -250,7 +347,8 @@ def process_item(swf_path, item_id, out_dir, work_dir=None):
             "size": {"w": atlas.width, "h": atlas.height}, "scale": str(RESOLUTION)}
     json.dump({"frames": frames, "meta": meta}, open(os.path.join(out_dir, f"{item_id}.json"), "w"))
     n_pts = len(entries[0][2])
-    print(f"wrote {item_id}.png/.json ({len(frames)} orientation frames, {n_pts} ground points) to {out_dir}")
+    anim_note = f", {animated_orientations} animated orientation(s)" if animated_orientations else ""
+    print(f"wrote {item_id}.png/.json ({len(frames)} total frames, {n_pts} ground points{anim_note}) to {out_dir}")
 
 
 def main():
