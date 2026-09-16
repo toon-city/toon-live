@@ -343,6 +343,33 @@ def export_milieu(args, frame_dir, toon):
     return entries
 
 
+def horizontal_anchor_x(toon, direction, width, fallback_x):
+    """Left edge for a "bas" frame: centred on the body's own legs sprite for
+    THIS direction.
+
+    SLOT_OFFSET is a single constant applied to every direction, calibrated
+    against dir 1. The source SWFs' retainBounds canvas does not keep the same
+    origin across directions, so that constant only lands dirs 1, 2, 4 and 5:
+    measured across 14 pant items against the body's legs, dirs 6, 8, 9 and 10
+    came out a median +20, +36, +20 and +24 px (3x canvas) to the RIGHT, on
+    every single item. dir 8 is the clearest tell -- its frame ends up with the
+    exact same spriteSourceSize as dir 4, i.e. a left-facing pose placed where
+    the right-facing one goes, unmirrored.
+
+    Same technique export_milieu already uses for tshirts, which measures
+    within half a pixel of the body on the items that were exported with it.
+    Only the horizontal placement is taken this way: vertical stays on
+    SLOT_OFFSET's constant, because a pair of trousers is anchored at the waist
+    and the legs sprite starts at the knee -- centring on it vertically would
+    slide the waistline down.
+    """
+    lg = toon.get(f"human_lg_{direction}_0.png")
+    if not lg:
+        return fallback_x
+    sss = lg["spriteSourceSize"]
+    return round(sss["x"] + sss["w"] / 2 - width / 2)
+
+
 def cmd_garment(args):
     work_dir = args.work_dir or tempfile.mkdtemp(prefix="swf_to_spritesheet_")
     os.makedirs(work_dir, exist_ok=True)
@@ -362,6 +389,7 @@ def cmd_garment(args):
     else:
         canvas_size = (80 * RESOLUTION, 120 * RESOLUTION)
         OX, OY = SLOT_OFFSET[args.slot]
+        toon = json.load(open(TOON_JSON))["frames"]
         entries = []
         for ca, (d, n) in CA_TO_DIR_FRAME.items():
             svg_path = os.path.join(frame_dir, f"{ca}.svg")
@@ -379,8 +407,9 @@ def cmd_garment(args):
                 continue
             trimmed = canvas.crop(bbox)
             dx, dy = get_anchor_override(args.anchor_overrides, args.item_id, d, n)
+            x = horizontal_anchor_x(toon, d, trimmed.width, bbox[0])
             fname = f"{args.item_id}_{d}_{n}.png"
-            entries.append((fname, trimmed, bbox[0] + dx, bbox[1] + dy, canvas_size[0], canvas_size[1]))
+            entries.append((fname, trimmed, x + dx, bbox[1] + dy, canvas_size[0], canvas_size[1]))
 
     if not entries:
         print("ERROR: no frames produced", file=sys.stderr)

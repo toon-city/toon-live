@@ -49,7 +49,7 @@ Usage:
 
 Requires: JPEXS FFDec (path below), cairosvg, Pillow.
 """
-import argparse, io, json, os, re, subprocess, sys, tempfile
+import argparse, io, json, os, re, struct, subprocess, sys, tempfile, zlib
 
 from PIL import Image
 import cairosvg
@@ -84,6 +84,50 @@ PAD = 3000  # px, pre-zoom canvas padding. 1000 silently clipped several items (
 # enough that the standard resolution/frame-count wouldn't be excessive.
 ANIM_ZOOM = 2
 ANIM_FRAME_STRIDE = 3
+
+# Some of these items aren't vector art at all: the SWF holds a small bitmap
+# and the "shape" is just a rectangle filled with it (confirmed on banc.swf --
+# its shapes embed a 79x26 and a 50x50 PNG). Rendering those through the
+# standard ZOOM path upscales a 79x26 bitmap to 317x105 and then hands the GPU
+# a sheet declaring scale 2, so it gets resampled a second time on the way back
+# down to its 158x52 display size. Two resamplings of an image that never had
+# the detail to begin with -- that's the "the banc looks blurry" report. There
+# is no detail to recover (the source really is 79x26), but exporting these at
+# 1x means exactly one resampling instead of two, and a sheet 1/4 the size.
+BITMAP_ZOOM = 2
+
+
+def format_scale(value):
+    """PixiJS parses "scale" with parseFloat either way, but keeping whole
+    numbers whole ("2", not "2.0") means re-exporting an unchanged item
+    produces a byte-identical JSON instead of a diff in every file."""
+    return str(int(value)) if float(value).is_integer() else str(value)
+
+
+def swf_frame_rate(swf_path, default=12.0):
+    """Frames per second declared in the SWF header, for animated items.
+
+    Read straight out of the header rather than assumed: the rate decides how
+    fast the runtime plays the exported frames back, and Flash files in this
+    set are not all the 24fps default (dancefloor.swf is 12). Header layout is
+    signature(3) + version(1) + length(4), then a RECT whose first 5 bits give
+    the bit width of its four fields, then frameRate as an 8.8 fixed-point
+    UI16. CWS means the part after the length is zlib-compressed.
+    """
+    try:
+        raw = open(swf_path, "rb").read()
+        sig = raw[:3].decode("latin1")
+        if sig == "CWS":
+            body = zlib.decompress(raw[8:])
+        elif sig == "FWS":
+            body = raw[8:]
+        else:
+            return default
+        nbits = body[0] >> 3
+        rect_bytes = (5 + nbits * 4 + 7) // 8
+        return struct.unpack("<H", body[rect_bytes:rect_bytes + 2])[0] / 256.0
+    except Exception:
+        return default
 
 
 def run_ffdec(*args, timeout=60):
@@ -272,11 +316,24 @@ def process_item(swf_path, item_id, out_dir, work_dir=None):
         print("ERROR: ffdec export produced no frames", file=sys.stderr)
         sys.exit(1)
 
+    # Bitmap-backed art gets rendered at 1x instead of the vector upscale --
+    # see BITMAP_ZOOM. Decided from frame 1 (an item is one or the other, not
+    # a mix) and the export is redone at the lower zoom when it applies.
+    with open(os.path.join(frame_dir, "1.svg"), errors="ignore") as f:
+        bitmap_backed = "data:image" in f.read()
+    static_zoom = BITMAP_ZOOM if bitmap_backed else ZOOM
+    if static_zoom != ZOOM:
+        frame_dir, n_frames = export_all_frames(swf_path, char_id, work_dir, zoom=static_zoom)
+        if not frame_dir or n_frames == 0:
+            print("ERROR: ffdec re-export at bitmap zoom produced no frames", file=sys.stderr)
+            sys.exit(1)
+
     frame_counts = build_frame_count_map(work_dir)
     marker_depth_order = None
     marker_char_id = None
     entries = []
     animated_orientations = 0
+    zooms_used = set()
     for n in range(1, n_frames + 1):
         svg_path = os.path.join(frame_dir, f"{n}.svg")
         if not os.path.exists(svg_path):
@@ -325,6 +382,7 @@ def process_item(swf_path, item_id, out_dir, work_dir=None):
                                  for (name, x, y) in points_raw]
                     fname = f"{item_id}_{n}_{out_n}.png"
                     entries.append((fname, trimmed, points_px))
+                    zooms_used.add(ANIM_ZOOM)
 
         if not animated:
             im, bbox = render_padded(clean_svg)
@@ -332,23 +390,45 @@ def process_item(swf_path, item_id, out_dir, work_dir=None):
                 print(f"WARNING: frame {n} is empty after stripping points, skipping", file=sys.stderr)
                 continue
             trimmed = im.crop(bbox)
-            points_px = [(name, round(x * ZOOM + PAD - bbox[0]), round(y * ZOOM + PAD - bbox[1]))
+            points_px = [(name, round(x * static_zoom + PAD - bbox[0]), round(y * static_zoom + PAD - bbox[1]))
                          for (name, x, y) in points_raw]
             fname = f"{item_id}_{n}.png"
             entries.append((fname, trimmed, points_px))
+            zooms_used.add(static_zoom)
 
     if not entries:
         print("ERROR: no frames produced", file=sys.stderr)
         sys.exit(1)
+    # "scale" is what PixiJS divides every frame rect by, so it has to state
+    # the zoom these pixels were actually rendered at, not a constant. zoom 2
+    # is the shipped 1x (see the module doc), hence zoom/2. Getting this wrong
+    # is silent and only shows up as an item rendering at the wrong SIZE:
+    # dancefloor shipped at ANIM_ZOOM=2 while still declaring scale 2, so it
+    # drew at half the size it should have.
+    if len(zooms_used) != 1:
+        print(f"ERROR: mixed render zooms in one sheet ({sorted(zooms_used)}). A "
+              f"TexturePacker sheet has a single 'scale' for all its frames, so an "
+              f"item with both static and animated orientations can't be expressed "
+              f"here -- give the animated orientation its own sheet.", file=sys.stderr)
+        sys.exit(1)
+    zoom_used = zooms_used.pop()
+
     atlas, frames = pack_atlas(entries)
     os.makedirs(out_dir, exist_ok=True)
     atlas.save(os.path.join(out_dir, f"{item_id}.png"))
     meta = {"version": "1.0", "image": f"{item_id}.png", "format": "RGBA8888",
-            "size": {"w": atlas.width, "h": atlas.height}, "scale": str(RESOLUTION)}
+            "size": {"w": atlas.width, "h": atlas.height}, "scale": format_scale(zoom_used / 2)}
+    if animated_orientations:
+        # Playback rate for the runtime. Every ANIM_FRAME_STRIDE-th frame was
+        # kept, so the remaining ones have to be shown that many times slower
+        # to keep the animation's real duration.
+        meta["animationFps"] = round(swf_frame_rate(swf_path) / ANIM_FRAME_STRIDE, 3)
     json.dump({"frames": frames, "meta": meta}, open(os.path.join(out_dir, f"{item_id}.json"), "w"))
     n_pts = len(entries[0][2])
     anim_note = f", {animated_orientations} animated orientation(s)" if animated_orientations else ""
-    print(f"wrote {item_id}.png/.json ({len(frames)} total frames, {n_pts} ground points{anim_note}) to {out_dir}")
+    src_note = ", bitmap source (rendered 1x)" if bitmap_backed else ""
+    print(f"wrote {item_id}.png/.json ({len(frames)} total frames, {n_pts} ground points"
+          f"{anim_note}{src_note}, scale {meta['scale']}) to {out_dir}")
 
 
 def main():
