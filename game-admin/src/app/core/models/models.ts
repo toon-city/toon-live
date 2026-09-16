@@ -123,6 +123,12 @@ export interface MetierInfo {
   minToonizLevel: number | null;
   /** null = pas de condition sur ce critère. */
   minDaysPlayed: number | null;
+  outfitTshirtItemId: number | null;
+  outfitTshirtItemName: string | null;
+  outfitPantItemId: number | null;
+  outfitPantItemName: string | null;
+  outfitHatItemId: number | null;
+  outfitHatItemName: string | null;
 }
 
 export interface AdminMetierRequest {
@@ -130,6 +136,9 @@ export interface AdminMetierRequest {
   dailyPez: number;
   minToonizLevel: number | null;
   minDaysPlayed: number | null;
+  outfitTshirtItemId: number | null;
+  outfitPantItemId: number | null;
+  outfitHatItemId: number | null;
 }
 
 // ─── Shop ─────────────────────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { map } from 'rxjs/operators';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -11,21 +12,36 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AdminMetiersService } from '../../core/services/admin-metiers.service';
+import { AdminItemsService } from '../../core/services/admin-items.service';
 import { MetierInfo } from '../../core/models/models';
+import { EntityAutocompleteComponent, EntityOption } from '../../shared/components/entity-autocomplete/entity-autocomplete.component';
 
 @Component({
   selector: 'app-metiers',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, InputTextModule, TagModule, DialogModule, ToastModule, ConfirmDialogModule, DropdownModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, InputTextModule, TagModule, DialogModule, ToastModule, ConfirmDialogModule, DropdownModule, EntityAutocompleteComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './metiers.component.html',
   styleUrls: ['./metiers.component.scss'],
 })
 export class MetiersComponent implements OnInit {
   private readonly metiersService = inject(AdminMetiersService);
+  private readonly itemsService = inject(AdminItemsService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
   private readonly fb = inject(FormBuilder);
+
+  /** Filtered client-side by subType after an itemType=CLOTHING search — AdminItemsService.list() has no subType param. */
+  private searchClothing(term: string, subType: string) {
+    return this.itemsService.list(term, 'CLOTHING').pipe(
+      map(page => page.content.filter(i => i.subType === subType).map(i => ({ id: i.id, label: i.name } as EntityOption))),
+    );
+  }
+  readonly searchTshirts = (term: string) => this.searchClothing(term, 'TOP');
+  readonly searchPants   = (term: string) => this.searchClothing(term, 'BOTTOM');
+  readonly searchHats    = (term: string) => this.searchClothing(term, 'HAT');
+  readonly resolveItem = (id: number | string) =>
+    this.itemsService.get(id as number).pipe(map(i => ({ id: i.id, label: i.name } as EntityOption)));
 
   metiers = signal<MetierInfo[]>([]);
   loading = signal(false);
@@ -42,10 +58,14 @@ export class MetiersComponent implements OnInit {
   editMetier: MetierInfo | null = null;
 
   form = this.fb.group({
-    name:            ['', Validators.required],
-    dailyPez:        [0, Validators.required],
-    minToonizLevel:  [null as number | null],
-    minDaysPlayed:   [null as number | null],
+    name:                ['', Validators.required],
+    dailyPez:            [0, Validators.required],
+    minToonizLevel:      [null as number | null],
+    minDaysPlayed:       [null as number | null],
+    outfitTshirtItemId:  [null as number | null, Validators.required],
+    outfitPantItemId:    [null as number | null, Validators.required],
+    /** Optional — a métier's outfit doesn't have to include a hat. */
+    outfitHatItemId:     [null as number | null],
   });
 
   ngOnInit() {
@@ -66,7 +86,10 @@ export class MetiersComponent implements OnInit {
 
   openCreate() {
     this.editMetier = null;
-    this.form.reset({ name: '', dailyPez: 0, minToonizLevel: null, minDaysPlayed: null });
+    this.form.reset({
+      name: '', dailyPez: 0, minToonizLevel: null, minDaysPlayed: null,
+      outfitTshirtItemId: null, outfitPantItemId: null, outfitHatItemId: null,
+    });
     this.createDialog = true;
   }
 
@@ -77,6 +100,9 @@ export class MetiersComponent implements OnInit {
       dailyPez: metier.dailyPez,
       minToonizLevel: metier.minToonizLevel,
       minDaysPlayed: metier.minDaysPlayed,
+      outfitTshirtItemId: metier.outfitTshirtItemId,
+      outfitPantItemId: metier.outfitPantItemId,
+      outfitHatItemId: metier.outfitHatItemId,
     });
     this.createDialog = true;
   }
