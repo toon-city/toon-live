@@ -57,7 +57,11 @@ import cairosvg
 FFDEC = "/mnt/c/Program Files (x86)/FFDec/ffdec.jar"
 RESOLUTION = 3
 ZOOM = RESOLUTION * 2  # matches swf_to_spritesheet.py's convention; see module doc for the zoom-2-is-current-1x proof
-PAD = 1000  # px, pre-zoom canvas padding -- generous enough for any furniture item's own extent
+PAD = 3000  # px, pre-zoom canvas padding. 1000 silently clipped several items (a statue's
+            # local origin isn't centered on its own art -- confirmed content bbox touching
+            # x=0 exactly on haie/rondcentre/statut1-4/statut_, i.e. real content lost, not
+            # just a tight-but-correct crop). Verified 3000 clears every jardin item with
+            # margin to spare; bump further if a future category needs more.
 
 
 def run_ffdec(*args, timeout=60):
