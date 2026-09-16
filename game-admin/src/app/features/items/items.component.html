@@ -78,19 +78,33 @@
            game-assets en dev (http://localhost:3001/...). -->
       <input pInputText formControlName="displayImage" placeholder="ex: http://localhost:3001/clothes/tshirt/example.png" class="w-full mt-1" />
     </div>
-    <div class="field mt-3">
-      <label>Clé sprite (catégorie)</label>
-      <!-- = le dossier sous clothes/ ou furnitures/ : hair, hat, tshirt,
-           pant, jardin... -->
-      <input pInputText formControlName="spriteKey" placeholder="ex: tshirt" class="w-full mt-1" />
-    </div>
-    <div class="field mt-3">
-      <label>Chemin spritesheet (id, sans dossier ni extension)</label>
-      <!-- Résolu par le runtime en clothes/{spriteKey}/{spritePath}.json
-           (Clothe.ts) ou furnitures/{spriteKey}/{spritePath}.json — jamais
-           un chemin complet, malgré ce que suggérait l'ancien placeholder. -->
-      <input pInputText formControlName="spritePath" placeholder="ex: tshirt_example" class="w-full mt-1" />
-    </div>
+    @if (isTextureSubType()) {
+      <div class="field mt-3">
+        <label>Fichier image (avec extension) *</label>
+        <!-- PAS un id de spritesheet comme pour le reste du formulaire : une
+             image plate (png/jpg), nom complet requis, sans dossier — résolu
+             en textures/walls/{spritePath} (WALLPAPER) ou
+             textures/floors/{spritePath} (FLOOR), jamais suffixé en .json.
+             Contrairement à tout le reste du formulaire, "Clé sprite" n'est
+             pas utilisée pour ces deux sous-types (GameCore.applyTexture) —
+             inutile de la remplir. -->
+        <input pInputText formControlName="spritePath" placeholder="ex: brique_rouge.jpg" class="w-full mt-1" />
+      </div>
+    } @else {
+      <div class="field mt-3">
+        <label>Clé sprite (catégorie)</label>
+        <!-- = le dossier sous clothes/ ou furnitures/ : hair, hat, tshirt,
+             pant, jardin... -->
+        <input pInputText formControlName="spriteKey" placeholder="ex: tshirt" class="w-full mt-1" />
+      </div>
+      <div class="field mt-3">
+        <label>Chemin spritesheet (id, sans dossier ni extension)</label>
+        <!-- Résolu par le runtime en clothes/{spriteKey}/{spritePath}.json
+             (Clothe.ts) ou furnitures/{spriteKey}/{spritePath}.json — jamais
+             un chemin complet, malgré ce que suggérait l'ancien placeholder. -->
+        <input pInputText formControlName="spritePath" placeholder="ex: tshirt_example" class="w-full mt-1" />
+      </div>
+    }
     <div class="field mt-3 flex align-items-center gap-2">
       <p-inputSwitch formControlName="possessable" inputId="possessable" />
       <label for="possessable">Possédable</label>

@@ -58,6 +58,16 @@ export class ItemsComponent implements OnInit {
 
   subTypeOptions = signal(this.toOptions(this.SUBTYPES_BY_TYPE['CLOTHING']));
 
+  /** WALLPAPER/FLOOR resolve spritePath completely differently from every
+   *  other item (a plain image at textures/{walls|floors}/{spritePath}, full
+   *  filename+extension — not a `.json` spritesheet keyed by a bare id like
+   *  clothing/furniture PIECE items) — the form's help text switches on this
+   *  so it doesn't tell someone creating a wallpaper item to drop the
+   *  extension, which is right for everything else but would just break the
+   *  texture load here. */
+  private readonly TEXTURE_SUBTYPES = ['WALLPAPER', 'FLOOR'];
+  isTextureSubType = signal(false);
+
   private toOptions(values: string[]) {
     return values.map(s => ({ label: s, value: s }));
   }
@@ -88,6 +98,8 @@ export class ItemsComponent implements OnInit {
         this.form.controls.subType.setValue(values[0] ?? null);
       }
     });
+    this.form.controls.subType.valueChanges.subscribe(subType =>
+      this.isTextureSubType.set(this.TEXTURE_SUBTYPES.includes(subType ?? '')));
   }
 
   load(page: number) {
