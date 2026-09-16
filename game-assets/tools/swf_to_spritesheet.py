@@ -80,9 +80,27 @@ TOON_PNG = "/root/git/toon-live/game-core/assets/toon/toon.png"
 # every time a new outlier turns up. No slot formula generalizes perfectly
 # (see SLOT_OFFSET / HAIR_WIDEST_ROW_OFFSET comments for why) -- this is the
 # escape hatch for the item that doesn't fit the formula, not a replacement
-# for it. Keys are item_id; each entry is {"dx": N, "dy": N} (applied to
-# every direction) and/or {"dirs": {"5": {"dx": N, "dy": N}, ...}} (added on
-# top, for a single direction that's off on its own). Units: 3x-canvas px.
+# for it.
+#
+# Every frame already gets its OWN independently-baked spriteSourceSize
+# (TexturePacker's own per-frame contract, nothing shared) -- this override
+# table only needs to express a CORRECTION on top of that, at whatever
+# granularity the outlier needs: item-wide, one direction, or (for a
+# garment with a stop/walk split) one specific direction+pose. Chain, each
+# level adding on top of the last: {"dx": N, "dy": N} (every frame of this
+# item) -> "dirs": {"<direction>": {"dx": N, "dy": N} (every frame of that
+# direction) -> "frames": {"<n>": {"dx": N, "dy": N}}}} (that one pose only,
+# n=0 stop / n=1 walk -- "bas"/AnimatedClothe items only, "milieu"/hat/hair
+# have a single frame per direction so this level never applies there).
+#
+# In practice n=0 and n=1 shouldn't need independent correction for "bas":
+# both poses of a direction are rasterized from the SAME shared retainBounds
+# canvas and pasted at the SAME fixed OX/OY (see cmd_garment), so whatever
+# offset fixes one fixes the other -- their relative position to each other
+# is already correct straight from the source SWF, only their position
+# relative to the BODY can be off, uniformly for both. The "frames" level
+# exists as an escape hatch in case a real exception turns up, not because
+# one is expected.
 ANCHOR_OVERRIDES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "anchor_overrides.json")
 
 
@@ -93,12 +111,17 @@ def load_anchor_overrides():
     return {}
 
 
-def get_anchor_override(overrides, item_id, direction):
+def get_anchor_override(overrides, item_id, direction, n=None):
     cfg = overrides.get(item_id, {})
     dx, dy = cfg.get("dx", 0), cfg.get("dy", 0)
     per_dir = cfg.get("dirs", {}).get(str(direction), {})
     dx += per_dir.get("dx", 0)
-    dy += per_dir.get("dy", 0)
+    dy_dir = per_dir.get("dy", 0)
+    if n is not None:
+        per_frame = per_dir.get("frames", {}).get(str(n), {})
+        dx += per_frame.get("dx", 0)
+        dy_dir += per_frame.get("dy", 0)
+    dy += dy_dir
     return dx, dy
 
 # CA (garment, 16 states) and CHAP/CHEV (accessory, 8 states) both resolve
@@ -341,7 +364,7 @@ def cmd_garment(args):
             if bbox is None:
                 continue
             trimmed = canvas.crop(bbox)
-            dx, dy = get_anchor_override(args.anchor_overrides, args.item_id, d)
+            dx, dy = get_anchor_override(args.anchor_overrides, args.item_id, d, n)
             fname = f"{args.item_id}_{d}_{n}.png"
             entries.append((fname, trimmed, bbox[0] + dx, bbox[1] + dy, canvas_size[0], canvas_size[1]))
 

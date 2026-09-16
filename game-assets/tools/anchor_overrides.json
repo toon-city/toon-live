@@ -1,4 +1,4 @@
 {
   "_comment": "Per-item manual position nudges for swf_to_spritesheet.py. Applied on top of whatever the item's slot formula computes -- use this when one specific item doesn't fit the formula, not as a replacement for the formula. See the ANCHOR_OVERRIDES_PATH comment in swf_to_spritesheet.py for the full story.",
-  "_format": "item_id: {\"dx\": N, \"dy\": N} applies to every direction; add \"dirs\": {\"<direction>\": {\"dx\": N, \"dy\": N}} for a single direction that's off on its own (added on top of dx/dy, not instead of). Units: 3x-canvas px."
+  "_format": "item_id: {\"dx\": N, \"dy\": N} applies to every frame; \"dirs\": {\"<direction>\": {\"dx\": N, \"dy\": N, \"frames\": {\"<n>\": {\"dx\": N, \"dy\": N}}}} adds on top for one direction, optionally down to one stop(n=0)/walk(n=1) pose (\"bas\" items only -- milieu/hat/hair have one frame per direction, no frames level). Each level ADDS on top of the ones above it. Units: 3x-canvas px."
 }
