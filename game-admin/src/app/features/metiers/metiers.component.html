@@ -1,0 +1,64 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <h2>Métiers</h2>
+  <div class="filters">
+    <p-button label="Nouveau métier" icon="pi pi-plus" (onClick)="openCreate()" />
+  </div>
+</div>
+
+<p-table [value]="metiers()" [loading]="loading()" styleClass="p-datatable-sm p-datatable-gridlines mt-3">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Pezs/jour</th>
+      <th>Niveau Tooniz requis</th>
+      <th>Jours joués requis</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-metier>
+    <tr>
+      <td>{{ metier.id }}</td>
+      <td>{{ metier.name }}</td>
+      <td><p-tag [value]="metier.dailyPez + ' pz'" severity="success" /></td>
+      <td>{{ toonizLabel(metier.minToonizLevel) }}</td>
+      <td>{{ metier.minDaysPlayed ?? '—' }}</td>
+      <td class="actions-cell">
+        <p-button icon="pi pi-pencil" [text]="true" size="small" (onClick)="openEdit(metier)" />
+        <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" (onClick)="deleteMetier(metier)" />
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr><td colspan="6">Aucun métier — créez-en un premier.</td></tr>
+  </ng-template>
+</p-table>
+
+<!-- Create/Edit dialog -->
+<p-dialog [(visible)]="createDialog" [header]="editMetier ? 'Modifier le métier' : 'Nouveau métier'" [modal]="true" [style]="{width:'450px'}">
+  <form [formGroup]="form" class="dialog-form">
+    <div class="field">
+      <label>Nom *</label>
+      <input pInputText formControlName="name" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Pezs rapportés par jour joué *</label>
+      <input pInputText type="number" formControlName="dailyPez" class="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Niveau Tooniz minimum</label>
+      <p-dropdown [options]="toonizLevels" formControlName="minToonizLevel" optionLabel="label" optionValue="value" styleClass="w-full mt-1" />
+    </div>
+    <div class="field mt-3">
+      <label>Jours joués minimum</label>
+      <input pInputText type="number" formControlName="minDaysPlayed" placeholder="aucune condition" class="w-full mt-1" />
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Annuler" [text]="true" (onClick)="createDialog = false" />
+    <p-button [label]="editMetier ? 'Modifier' : 'Créer'" (onClick)="save()" [disabled]="form.invalid" />
+  </ng-template>
+</p-dialog>

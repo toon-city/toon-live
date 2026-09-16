@@ -113,6 +113,25 @@ export interface AdminItemRequest {
   spriteKey?: string;
 }
 
+// ─── Métiers ────────────────────────────────────────────────────────────────
+
+export interface MetierInfo {
+  id: number;
+  name: string;
+  dailyPez: number;
+  /** null = pas de condition sur ce critère. 0/1/2/3 = aucun/bronze/argent/or. */
+  minToonizLevel: number | null;
+  /** null = pas de condition sur ce critère. */
+  minDaysPlayed: number | null;
+}
+
+export interface AdminMetierRequest {
+  name: string;
+  dailyPez: number;
+  minToonizLevel: number | null;
+  minDaysPlayed: number | null;
+}
+
 // ─── Shop ─────────────────────────────────────────────────────────────────────
 
 export interface ShopItem {
