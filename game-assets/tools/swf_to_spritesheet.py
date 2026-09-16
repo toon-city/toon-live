@@ -103,8 +103,8 @@ SLOT_INSTANCE_NAME = {"bas": "vetbas", "milieu": "vetmil", "hat": "chap", "hair"
 # whatever imprecision the first one had, so always anchor against the body.
 SLOT_OFFSET = {"bas": (-97, 3)}
 HAT_HEAD_K = 48  # px (3x canvas): vertical depth a cap sits into the head silhouette
-HAIR_BOTTOM_OFFSET = 124  # px (3x canvas): head.y + this = where hair's bottom edge sits,
-                          # derived from the already-shipped hair7's own position
+HAIR_WIDEST_ROW_OFFSET = 34  # px (3x canvas): head.y + this = where a hairstyle's own
+                             # widest row sits -- see cmd_accessory's hair branch
 
 
 def run_ffdec(*args, timeout=60):
@@ -378,14 +378,35 @@ def cmd_accessory(args):
         if args.slot == "hair":
             # A cap's own height barely varies by design, so anchoring its
             # TOP at a fixed depth above the head (HAT_HEAD_K) holds across
-            # different caps. Hair styles vary wildly in height (short bob
-            # vs. tall spikes) -- a fixed top-offset either floats a tall
-            # style above the scalp or clips it, confirmed visually on a
-            # spot check across several styles. Anchor the BOTTOM instead
-            # (where hair actually meets the head, roughly constant
-            # regardless of how far up a style extends) using the already-
-            # shipped hair7's own proven position as the reference depth.
-            OY = round((hsss["y"] + HAIR_BOTTOM_OFFSET) - trimmed.height)
+            # different caps. Hair styles vary far more (a bun/spike/bow
+            # extends way up, a ponytail/sidelock extends way down) -- BOTH
+            # top-anchor and bottom-anchor were tried and both failed: top-
+            # anchor floats/clips tall styles, and bottom-anchor (matching
+            # hair7's position) was proven wrong here too -- on a style with
+            # little downward extension (a snug cap-like cut, or a fringe
+            # with no long sides) the bottom sits so close to the top that
+            # bottom-anchoring shoves the WHOLE style down over the face
+            # (confirmed on coiffure5/6: short trimmed height dragged the
+            # whole thing down to cover the eyes); conversely a style with a
+            # lot of downward reach (long twin pigtails, coiffure23) got
+            # pulled up so far the top floated above the head.
+            #
+            # Neither the top nor the bottom of the trimmed bbox is a
+            # reliable proxy for "where this style actually sits on the
+            # skull" once up-reach and down-reach vary independently per
+            # style. The widest row of the silhouette is: nearly every
+            # style (buns, bobs, caps, pigtails, pixie cuts) is widest
+            # around ear/temple level, where it wraps the head, regardless
+            # of how far it extends up or down from there. Anchoring THAT
+            # row is what's actually invariant. Offset calibrated against
+            # the cluster of items that were never flagged as misplaced
+            # (coiffure1/2/3/4/7/8/10/13/14/16/17/20/21/22/25/26/27, mean
+            # ~34px, tight relative to the ~130px spread bottom-anchoring
+            # produced across the same set).
+            arr = np.array(trimmed)
+            row_widths = (arr[:, :, 3] > 10).sum(axis=1)
+            widest_row_local = int(np.argmax(row_widths)) if row_widths.any() else 0
+            OY = round((hsss["y"] + HAIR_WIDEST_ROW_OFFSET) - widest_row_local)
         else:
             OY = round(hsss["y"] - HAT_HEAD_K)
 
