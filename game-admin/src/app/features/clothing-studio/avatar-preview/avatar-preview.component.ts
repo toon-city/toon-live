@@ -48,6 +48,18 @@ export class AvatarPreviewComponent implements AfterViewInit, OnDestroy, OnChang
   private app: Application | null = null;
   private avatar: Avatar | null = null;
   private ready = false;
+  /**
+   * ngAfterViewInit is async (two awaits below); if ngOnDestroy fires before
+   * either resolves, destroying `app` while `init()` is still mid-flight
+   * tears the renderer into a torn state — the ticker keeps scheduling
+   * frames, and the next one hits a just-nulled batcher/geometry once init
+   * finishes building on top of it (same crash confirmed live for
+   * game-web's avatar-badge, which has the identical pattern — see its
+   * comment for the reproduction). Checked after each await so we bail
+   * before touching an app ngOnDestroy already started tearing down.
+   */
+  private destroyed = false;
+  private initDone = false;
 
   async ngAfterViewInit(): Promise<void> {
     this.app = new Application();
@@ -60,17 +72,20 @@ export class AvatarPreviewComponent implements AfterViewInit, OnDestroy, OnChang
       resolution: window.devicePixelRatio ?? 1,
       autoDensity: true,
     });
+    if (this.destroyed) { this.app.destroy({}, { children: true }); this.app = null; return; }
 
     // Idempotent: safe even if another AvatarPreviewComponent instance (or
     // any other GameCore-based screen) already set/loaded these.
     if (environment.assetsUrl) AssetBaseUrl.setDynamic(environment.assetsUrl);
     await BaseTextureLoader.getInstance().load();
+    if (this.destroyed) { this.app.destroy({}, { children: true }); this.app = null; return; }
 
     this.avatar = new Avatar(this.app, { showSocle: this.showSocle, direction: this.direction });
     this.avatar.scale.set(ZOOM);
     this.app.stage.addChild(this.avatar);
 
     this.ready = true;
+    this.initDone = true;
     this.applyInputs();
   }
 
@@ -96,9 +111,15 @@ export class AvatarPreviewComponent implements AfterViewInit, OnDestroy, OnChang
   }
 
   ngOnDestroy(): void {
-    this.app?.ticker.stop();
-    this.app?.destroy(true, { children: true });
-    this.app = null;
+    this.destroyed = true;
+    // See `destroyed`'s comment: only destroy directly once init() has
+    // actually finished. While still in flight, ngAfterViewInit's post-await
+    // checks handle teardown themselves.
+    if (this.initDone && this.app) {
+      this.app.ticker.stop();
+      this.app.destroy({}, { children: true });
+      this.app = null;
+    }
     this.avatar = null;
   }
 }
