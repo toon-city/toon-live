@@ -34,7 +34,7 @@ const ZOOM = 4;
   standalone: true,
   template: `<canvas #canvas class="avatar-canvas"></canvas>`,
   styles: [`
-    .avatar-canvas { display: block; image-rendering: pixelated; }
+    .avatar-canvas { display: block; }
   `],
 })
 export class AvatarPreviewComponent implements AfterViewInit, OnDestroy, OnChanges {
@@ -56,7 +56,7 @@ export class AvatarPreviewComponent implements AfterViewInit, OnDestroy, OnChang
       width: AVATAR_CANVAS_W * ZOOM,
       height: AVATAR_CANVAS_H * ZOOM,
       backgroundAlpha: 0,
-      antialias: false,
+      antialias: true,
       resolution: window.devicePixelRatio ?? 1,
       autoDensity: true,
     });
