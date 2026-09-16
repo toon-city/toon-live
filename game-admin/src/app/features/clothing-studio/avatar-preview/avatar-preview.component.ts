@@ -69,7 +69,10 @@ export class AvatarPreviewComponent implements AfterViewInit, OnDestroy, OnChang
       height: AVATAR_CANVAS_H * ZOOM,
       backgroundAlpha: 0,
       antialias: true,
-      resolution: window.devicePixelRatio ?? 1,
+      // See avatar-badge.component.ts's identical comment: supersampled
+      // above real DPR to fight minification jaggies from the 3x body sheet
+      // downscaled with no mipmap chain -- confirmed live, cheap at this size.
+      resolution: Math.max(2, window.devicePixelRatio ?? 1),
       autoDensity: true,
     });
     if (this.destroyed) { this.app.destroy({}, { children: true }); this.app = null; return; }
