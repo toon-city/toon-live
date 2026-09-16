@@ -8,9 +8,15 @@ Two source conventions exist in the original game and are both supported:
   "garment" (category: pant, tshirt, ...): the item's own SWF has a
   top-level MovieClip instance named 'vetbas' (bottom wear) or 'vetmil'
   (top wear / makeup / ghost skin) with a 16-frame timeline: frame N is
-  CA state N, i.e. 8 directions x 2 poses (walk, stop). Output uses
-  AnimatedClothe's frame contract: {id}_{direction}_{n}.png, n=0 (stop) or
-  1 (walk).
+  CA state N, i.e. 8 directions x 2 poses (walk, stop).
+
+  --slot bas outputs AnimatedClothe's frame contract (Pant.ts):
+  {id}_{direction}_{n}.png, n=0 (stop) or 1 (walk).
+
+  --slot milieu outputs Tshirt.ts's contract (Clothe, overridden):
+  {id}_bd_{direction}.png, one static frame per direction, embedded arm
+  content stripped out. See export_milieu()'s docstring for why this
+  does NOT also generate ClotheSleeve ({id}_al/ar_*) overlays.
 
   "accessory" (category: hat, hair): the item's own SWF has a top-level
   instance named 'chap' (hat) or 'coif' (hair) with an 8-frame timeline:
@@ -45,7 +51,7 @@ itself -- shared-symbol mirror ambiguities, a front/back content mismatch
 
 Usage:
   python3 swf_to_spritesheet.py garment INPUT.swf ITEM_ID --slot bas
-  python3 swf_to_spritesheet.py garment INPUT.swf ITEM_ID --slot milieu [--no-arm-strip]
+  python3 swf_to_spritesheet.py garment INPUT.swf ITEM_ID --slot milieu
   python3 swf_to_spritesheet.py accessory INPUT.swf ITEM_ID --slot hat
   python3 swf_to_spritesheet.py accessory INPUT.swf ITEM_ID --slot hair [--no-tint-detect]
 
@@ -77,20 +83,25 @@ CHAP_TO_DIR = {1: 1, 2: 2, 3: 10, 4: 6, 5: 9, 6: 5, 7: 8, 8: 4}
 
 SLOT_INSTANCE_NAME = {"bas": "vetbas", "milieu": "vetmil", "hat": "chap", "hair": "coif"}
 
-# Fixed placement offsets, each independently calibrated and verified this
-# session by center-matching a pilot item's frame-1 (CA1/dir1, untrimmed
-# canvas) against the BODY's own real anatomical anchor directly -- NOT
-# against another shipped item (tried anchoring "bas" against pant1's own
-# json instead of the body once while building this script: pant1 needed
+# Fixed placement offset for "bas", calibrated by center-matching a pilot
+# item's frame-1 (CA1/dir1, untrimmed canvas) against the BODY's hip overlap
+# zone directly -- proven across all 176 imported pant/jupe items (a single
+# source-SWF family, consistent registration). In 3x-canvas px, applied as a
+# paste offset for the FULL untrimmed retainBounds frame.
+#
+# "milieu" does NOT use a fixed offset -- a fixed constant that matched
+# tshirt_rayebleu within ~1px landed tshirt_policier's shoulders ~9-10px off
+# center (confirmed: its two sleeve caps sit symmetric to EACH OTHER but the
+# whole garment is shifted right relative to the body). Different milieu
+# source SWFs don't share a common registration the way the 176 bas items
+# do, so milieu instead centers each frame's own trimmed content directly
+# against the body's own torso (bd) sprite center for that direction -- see
+# cmd_garment. Anchoring against another shipped item's json instead of the
+# body was tried once for "bas" while building this script (pant1 needed
 # several rounds of manual nudging historically, per its own git log, and
-# sure enough the result landed ~9px too low -- second-hand references
-# inherit whatever imprecision the first one had). "bas" was anchored
-# against the hip overlap zone in the body's own torso/leg art (proven
-# across all 176 imported pant/jupe items). "milieu" was anchored against
-# the torso bbox directly (proven across tshirt_rayebleu + tshirt_policier).
-# Both are in 3x-canvas px, applied as a paste offset for the FULL
-# untrimmed retainBounds frame (see cmd_garment).
-SLOT_OFFSET = {"bas": (-97, 3), "milieu": (-102, 34)}
+# sure enough the result landed ~9px off) -- second-hand references inherit
+# whatever imprecision the first one had, so always anchor against the body.
+SLOT_OFFSET = {"bas": (-97, 3)}
 HAT_HEAD_K = 48  # px (3x canvas): vertical depth a cap sits into the head silhouette
 HAIR_BOTTOM_OFFSET = 124  # px (3x canvas): head.y + this = where hair's bottom edge sits,
                           # derived from the already-shipped hair7's own position
@@ -211,6 +222,59 @@ def write_item(out_dir, item_id, atlas, frames):
     json.dump({"frames": frames, "meta": meta}, open(os.path.join(out_dir, f"{item_id}.json"), "w"))
 
 
+def export_milieu(args, frame_dir, toon):
+    """"milieu" (tshirt/...) targets Tshirt.ts's contract: Clothe,
+    OVERRIDDEN to `{id}_bd_{direction}.png` (one static frame per
+    direction, no walk/stop split -- the fabric itself never animates,
+    only what's under it does). Built from each direction's CA "stop"
+    (n=0) pose with the arm sub-instance stripped, centered on the body's
+    own torso (bd) sprite -- see SLOT_OFFSET comment for why a fixed
+    offset doesn't work here.
+
+    No ClotheSleeve (`{id}_al/ar_{direction}_{n}.png`) output: every
+    milieu SWF inspected this session embeds an "arm" sub-instance
+    (nested sprite, the strip_root_use_by_href arm-vs-fabric split
+    targets it) purely as a skin-toned positioning aid for directions the
+    body rig itself can't draw an arm at correctly -- the exact same
+    technique this session already used to backfill the BODY's own
+    toon.json arm frames -- NOT colored sleeve fabric. Exporting it as a
+    ClotheSleeve would paste a raw un-neutralized skin-tone patch (own
+    baked placeholder tone, never tinted, per ClotheSleeve.ts's class doc)
+    over the body's own already-correct, tintable arm. The body's arm
+    showing bare past the fabric's own short-sleeve cap is therefore the
+    CORRECT look for a short-sleeve garment, not a gap. A future
+    genuinely long-sleeved item should have its embedded arm content
+    inspected for real fabric coloring before assuming this applies to it
+    too.
+    """
+    canvas_size = (80 * RESOLUTION, 120 * RESOLUTION)
+    entries = []
+
+    for ca, (d, n) in CA_TO_DIR_FRAME.items():
+        if n != 0:
+            continue
+        svg_path = os.path.join(frame_dir, f"{ca}.svg")
+        if not os.path.exists(svg_path):
+            continue
+        with open(svg_path, errors="ignore") as f:
+            svg = f.read()
+        fabric_svg = strip_root_use_by_href(svg, drop_if_sprite_href=True)
+        im = Image.open(io.BytesIO(cairosvg.svg2png(bytestring=fabric_svg.encode("utf-8")))).convert("RGBA")
+        bbox = im.getbbox()
+        if bbox is None:
+            continue
+        trimmed = im.crop(bbox)
+        bd_key = f"human_bd_{d}_0.png"
+        if bd_key not in toon:
+            continue
+        bdsss = toon[bd_key]["spriteSourceSize"]
+        ox = round(bdsss["x"] + bdsss["w"] / 2 - trimmed.width / 2)
+        oy = round(bdsss["y"] + bdsss["h"] / 2 - trimmed.height / 2)
+        entries.append((f"{args.item_id}_bd_{d}.png", trimmed, ox, oy, canvas_size[0], canvas_size[1]))
+
+    return entries
+
+
 def cmd_garment(args):
     work_dir = args.work_dir or tempfile.mkdtemp(prefix="swf_to_spritesheet_")
     os.makedirs(work_dir, exist_ok=True)
@@ -224,37 +288,37 @@ def cmd_garment(args):
         print("ERROR: ffdec export produced no frames", file=sys.stderr)
         sys.exit(1)
 
-    OX, OY = SLOT_OFFSET[args.slot]
-    do_strip = args.strip_arm and args.slot == "milieu"  # bas items never embed an arm
-    canvas_size = (80 * RESOLUTION, 120 * RESOLUTION)
-
-    entries = []
-    for ca, (d, n) in CA_TO_DIR_FRAME.items():
-        svg_path = os.path.join(frame_dir, f"{ca}.svg")
-        if not os.path.exists(svg_path):
-            print(f"WARNING: missing frame {ca}, skipping", file=sys.stderr)
-            continue
-        with open(svg_path, errors="ignore") as f:
-            svg = f.read()
-        if do_strip:
-            svg = strip_root_use_by_href(svg, drop_if_sprite_href=True)
-        png = cairosvg.svg2png(bytestring=svg.encode("utf-8"))
-        im = Image.open(io.BytesIO(png)).convert("RGBA")
-        canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
-        canvas.paste(im, (OX, OY), im)
-        bbox = canvas.getbbox()
-        if bbox is None:
-            continue
-        trimmed = canvas.crop(bbox)
-        fname = f"{args.item_id}_{d}_{n}.png"
-        entries.append((fname, trimmed, bbox[0], bbox[1], canvas_size[0], canvas_size[1]))
+    if args.slot == "milieu":
+        toon = json.load(open(TOON_JSON))["frames"]
+        entries = export_milieu(args, frame_dir, toon)
+    else:
+        canvas_size = (80 * RESOLUTION, 120 * RESOLUTION)
+        OX, OY = SLOT_OFFSET[args.slot]
+        entries = []
+        for ca, (d, n) in CA_TO_DIR_FRAME.items():
+            svg_path = os.path.join(frame_dir, f"{ca}.svg")
+            if not os.path.exists(svg_path):
+                print(f"WARNING: missing frame {ca}, skipping", file=sys.stderr)
+                continue
+            with open(svg_path, errors="ignore") as f:
+                svg = f.read()
+            png = cairosvg.svg2png(bytestring=svg.encode("utf-8"))
+            im = Image.open(io.BytesIO(png)).convert("RGBA")
+            canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+            canvas.paste(im, (OX, OY), im)
+            bbox = canvas.getbbox()
+            if bbox is None:
+                continue
+            trimmed = canvas.crop(bbox)
+            fname = f"{args.item_id}_{d}_{n}.png"
+            entries.append((fname, trimmed, bbox[0], bbox[1], canvas_size[0], canvas_size[1]))
 
     if not entries:
         print("ERROR: no frames produced", file=sys.stderr)
         sys.exit(1)
     atlas, frames = pack_atlas(entries)
     write_item(args.out_dir, args.item_id, atlas, frames)
-    print(f"wrote {args.item_id}.png/.json ({len(frames)} frames) to {args.out_dir}  [OX={OX} OY={OY}]")
+    print(f"wrote {args.item_id}.png/.json ({len(frames)} frames) to {args.out_dir}")
 
 
 def cmd_accessory(args):
@@ -347,12 +411,8 @@ def main():
     g.add_argument("item_id")
     g.add_argument("--slot", choices=["bas", "milieu"], required=True)
     g.add_argument("--out-dir", required=True)
-    g.add_argument("--no-arm-strip", dest="strip_arm", action="store_false",
-                    help="milieu items only: keep the embedded arm instead of dropping it "
-                         "(the arm is never tinted by skin color in the original game, "
-                         "so this is almost never what you want -- see conversation notes)")
     g.add_argument("--work-dir")
-    g.set_defaults(strip_arm=True, func=cmd_garment)
+    g.set_defaults(func=cmd_garment)
 
     a = sub.add_parser("accessory", help="8-frame CHAP/CHEV-based item (hat/hair)")
     a.add_argument("swf")
