@@ -249,8 +249,16 @@ def has_named_subinstance(svg_text, name):
 
 def pack_atlas(entries, atlas_w=1024, pad=6):
     """entries: list of (filename, PIL image, spriteSourceSize_x, spriteSourceSize_y,
-    sourceSize_w, sourceSize_h). Returns (atlas_image, frames_dict)."""
+    sourceSize_w, sourceSize_h). Returns (atlas_image, frames_dict).
+
+    atlas_w grows to fit whichever single entry is widest -- see the
+    identical function's comment in swf_to_furniture.py for why this
+    matters (a lone item wider than the default 1024 gets silently
+    clipped by Image.paste() otherwise). Never triggered here so far
+    (every avatar item comfortably under 240px) but cheap insurance.
+    """
     entries = sorted(entries, key=lambda e: -e[1].height)
+    atlas_w = max(atlas_w, max((im.width for _, im, *_ in entries), default=0) + 2 * pad)
     cx, cy, row_h = pad, pad, 0
     placements = []
     for fname, im, sx, sy, sw, sh in entries:

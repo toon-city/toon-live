@@ -157,8 +157,19 @@ def render_padded(svg_text):
 
 
 def pack_atlas(entries, atlas_w=1024, pad=6):
-    """entries: list of (filename, PIL image, points_px). Returns (atlas, frames_dict)."""
+    """entries: list of (filename, PIL image, points_px). Returns (atlas, frames_dict).
+
+    atlas_w grows to fit whichever single entry is widest: the row-wrap
+    check below only ever compares "does adding this item overflow the
+    row", never "is this item wider than the atlas on its own" -- a lone
+    item wider than the default 1024 (seen: rond_centre at 1741px, a wide
+    ring shape) would get placed at its row's start and then silently
+    clipped when pasted into a fixed-width atlas Image (Image.paste()
+    truncates instead of raising). Avatar clothing never hit this (every
+    item comfortably under 240px), furniture can be much bigger.
+    """
     entries = sorted(entries, key=lambda e: -e[1].height)
+    atlas_w = max(atlas_w, max((im.width for _, im, _ in entries), default=0) + 2 * pad)
     cx, cy, row_h = pad, pad, 0
     placements = []
     for fname, im, points in entries:
