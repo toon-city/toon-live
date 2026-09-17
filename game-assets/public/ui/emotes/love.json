@@ -1,0 +1,78 @@
+{
+  "frames": {
+    "coeur": {
+      "frame": {
+        "x": 6,
+        "y": 6,
+        "w": 329,
+        "h": 297
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 329,
+        "h": 297
+      },
+      "sourceSize": {
+        "w": 329,
+        "h": 297
+      }
+    },
+    "love_composed": {
+      "frame": {
+        "x": 341,
+        "y": 6,
+        "w": 323,
+        "h": 114
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 323,
+        "h": 114
+      },
+      "sourceSize": {
+        "w": 323,
+        "h": 114
+      }
+    }
+  },
+  "meta": {
+    "version": "1.0",
+    "image": "love.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1024,
+      "h": 309
+    },
+    "scale": "1",
+    "schema": "'coeur' = single heart icon, for independently-pulsed placement (recommended: matches the original, which pulses each heart's SCALE via code, not a baked animation). 'love_composed' = the same 3 hearts pre-baked into one static image at their original fixed layout, for a simpler non-pulsing fallback if preferred.",
+    "threeHeartLayout": {
+      "note": "relative offset (x,y) and (scaleX,scaleY) of each heart instance within the composed art, pre-zoom SWF units",
+      "hearts": [
+        {
+          "x": -2.7,
+          "y": 11.3,
+          "scaleX": 0.2511,
+          "scaleY": 0.2383
+        },
+        {
+          "x": 12.25,
+          "y": 6.0,
+          "scaleX": 0.2511,
+          "scaleY": 0.2383
+        },
+        {
+          "x": 27.3,
+          "y": 11.3,
+          "scaleX": 0.2511,
+          "scaleY": 0.2383
+        }
+      ]
+    }
+  }
+}
